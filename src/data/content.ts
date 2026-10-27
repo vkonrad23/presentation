@@ -2,6 +2,11 @@ export const navigation = [
   { label: 'Product', id: 'product' },
   { label: 'How it works', id: 'how-it-works' },
   { label: 'AI & safety', id: 'ai-safety' },
+  { label: 'About', id: 'team' },
+  { label: 'Contact', id: 'contact' },
+] as const;
+
+export const aboutNavigation = [
   { label: 'Evidence', id: 'evidence' },
   { label: 'Business', id: 'business' },
   { label: 'Accelerator case', id: 'accelerator' },

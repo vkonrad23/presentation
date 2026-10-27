@@ -1,0 +1,31 @@
+@property --hero-range-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #08754D;
+}
+
+.hero-demo-rating { flex-shrink: 0; min-width: 76px; font-size: 20px; font-weight: 650; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.hero-demo-slider { appearance: none; min-height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; cursor: pointer; transition: --hero-range-color 220ms ease; }
+.hero-demo-slider::-webkit-slider-runnable-track { height: 6px; border-radius: 99px; background: linear-gradient(to right, var(--hero-range-color) 0 var(--hero-range-progress), #D1DCCF var(--hero-range-progress) 100%); }
+.hero-demo-slider::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; margin-top: -7px; border: 2px solid white; border-radius: 50%; background: var(--hero-range-color); box-shadow: 0 0 0 1px var(--hero-range-color); }
+.hero-demo-slider::-moz-range-track { height: 6px; border-radius: 99px; background: #D1DCCF; }
+.hero-demo-slider::-moz-range-progress { height: 6px; border-radius: 99px; background: var(--hero-range-color); }
+.hero-demo-slider::-moz-range-thumb { box-sizing: border-box; width: 20px; height: 20px; border: 2px solid white; border-radius: 50%; background: var(--hero-range-color); box-shadow: 0 0 0 1px var(--hero-range-color); }
+.hero-demo-explanation > summary { list-style: none; }
+.hero-demo-explanation > summary::-webkit-details-marker { display: none; }
+.hero-demo-explanation-arrow { transition: transform 220ms ease; }
+.hero-demo-explanation[open] > summary .hero-demo-explanation-arrow { transform: rotate(90deg); }
+.hero-demo-explanation[data-motion-disclosure="closing"] > summary .hero-demo-explanation-arrow { transform: none; }
+.hero-demo-disclaimer > span { display: block; }
+.hero-demo-urgent { display: flex; width: fit-content; min-height: 44px; align-items: center; justify-content: center; margin: 2px auto -4px; text-decoration: underline; text-underline-offset: 3px; }
+.hero-demo-urgent:hover { color: #08754D; }
+
+@media (max-width: 639px) {
+  .hero-demo-suggestion-label { flex-wrap: wrap; }
+}
+@media (max-width: 359px) {
+  .hero-demo-actions { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-demo-slider, .hero-demo-explanation-arrow { transition: none !important; }
+}

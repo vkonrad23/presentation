@@ -403,7 +403,7 @@ function LegalDialog({ dialogRef, id, title, introduction, principles }: LegalDi
   );
 }
 
-export function Footer() {
+export function Footer({ onPresent, presentationActive = false }: { onPresent?: () => void; presentationActive?: boolean } = {}) {
   const privacyRef = useRef<HTMLDialogElement>(null);
   const termsRef = useRef<HTMLDialogElement>(null);
 
@@ -424,7 +424,7 @@ export function Footer() {
             </p>
           </div>
 
-          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-5 gap-y-7 md:grid-cols-4">
+          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-5 gap-y-7 md:grid-cols-3 xl:grid-cols-5">
             {footerGroups.map((group) => (
               <div key={group.title}>
                 <h2 className="mb-2 text-sm font-semibold text-[#10251F]">{group.title}</h2>
@@ -448,6 +448,20 @@ export function Footer() {
                 )}
               </div>
             ))}
+            <div id="investors" className="scroll-mt-28">
+              <h2 className="mb-2 text-sm font-semibold text-[#10251F]">For investors</h2>
+              <ul>
+                {onPresent && <li><button id="present-toggle" type="button" aria-pressed={presentationActive}
+                  className="inline-flex min-h-11 items-center py-2 text-sm text-[#52645D] hover:text-[#063F32] hover:underline hover:underline-offset-4"
+                  onClick={() => { if (presentationActive) document.getElementById('presentation-chapter')?.focus(); else onPresent(); }}>Present</button></li>}
+                {[
+                  ['View demo', '#journey'],
+                  ['View accelerator case', '#accelerator'],
+                  ['Accelerator application', '#application'],
+                  ['Explore the research vision', '#research'],
+                ].map(([label, href]) => <li key={href}><a href={href} className="inline-flex min-h-11 items-center py-2 text-sm leading-5 text-[#52645D] hover:text-[#063F32] hover:underline hover:underline-offset-4">{label}</a></li>)}
+              </ul>
+            </div>
             <div>
               <h2 className="mb-2 text-sm font-semibold text-[#10251F]">Safety & legal</h2>
               <ul>

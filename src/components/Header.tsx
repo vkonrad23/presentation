@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, Menu, Presentation, X } from 'lucide-react';
-import { navigation } from '../data/content';
+import { ChevronDown, Menu, X } from 'lucide-react';
+import { aboutNavigation, navigation } from '../data/content';
 
 export function Logo() {
   return (
@@ -15,23 +15,28 @@ export function Logo() {
   );
 }
 
-export function Header({ onPresent, presentationActive = false }: { onPresent?: () => void; presentationActive?: boolean } = {}) {
+export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [active, setActive] = useState('product');
   const [scrolled, setScrolled] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1280px)').matches);
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
   const headerRef = useRef<HTMLElement>(null);
   const navigationRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
+  // About links to the team; its adjacent disclosure groups the supporting sections.
+  const activePrimary = active === 'team' || aboutNavigation.some(item => item.id === active) ? 'team' : active;
+  const closeMenus = () => { setMenuOpen(false); setAboutOpen(false); };
 
   useEffect(() => {
     const viewport = window.matchMedia('(min-width: 1280px)');
     const updateViewport = () => {
       setIsDesktop(viewport.matches);
+      setAboutOpen(false);
       if (viewport.matches) setMenuOpen(false);
     };
-    updateViewport();
     viewport.addEventListener('change', updateViewport);
     return () => viewport.removeEventListener('change', updateViewport);
   }, []);
@@ -42,7 +47,7 @@ export function Header({ onPresent, presentationActive = false }: { onPresent?: 
       return;
     }
     const nav = navigationRef.current;
-    const link = linkRefs.current.get(active);
+    const link = linkRefs.current.get(activePrimary);
     if (!nav || !link) return;
     let frame = 0;
     let disposed = false;
@@ -66,15 +71,17 @@ export function Header({ onPresent, presentationActive = false }: { onPresent?: 
       window.removeEventListener('resize', schedule);
       window.cancelAnimationFrame(frame);
     };
-  }, [active, isDesktop]);
+  }, [activePrimary, isDesktop]);
 
   useEffect(() => {
     let frame = 0;
     const update = () => {
       frame = 0;
       const boundary = (headerRef.current?.getBoundingClientRect().bottom ?? 88) + 80;
-      const sections = navigation.map(item => ({ id: item.id, element: document.getElementById(item.id) }));
-      const current = sections.filter(item => item.element && item.element.getBoundingClientRect().top <= boundary).at(-1);
+      const current = [...navigation, ...aboutNavigation]
+        .map(item => ({ id: item.id, top: document.getElementById(item.id)?.getBoundingClientRect().top }))
+        .filter((item): item is { id: typeof item.id; top: number } => item.top !== undefined && item.top <= boundary)
+        .sort((a, b) => a.top - b.top).at(-1);
       setActive(current?.id ?? 'product');
       setScrolled(window.scrollY > 12);
     };
@@ -93,15 +100,22 @@ export function Header({ onPresent, presentationActive = false }: { onPresent?: 
   }, []);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen && !aboutOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key !== 'Escape' || document.querySelector('dialog[open]')) return;
+      event.preventDefault();
+      if (aboutOpen) {
+        setAboutOpen(false);
+        document.getElementById('about-toggle')?.focus({ preventScroll: true });
+      } else {
         setMenuOpen(false);
-        document.getElementById('menu-toggle')?.focus();
+        document.getElementById('menu-toggle')?.focus({ preventScroll: true });
       }
     };
     const closeOutside = (event: PointerEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) setMenuOpen(false);
+      const target = event.target as Node;
+      if (!aboutRef.current?.contains(target)) setAboutOpen(false);
+      if (!headerRef.current?.contains(target)) setMenuOpen(false);
     };
     document.addEventListener('keydown', closeOnEscape);
     document.addEventListener('pointerdown', closeOutside);
@@ -109,50 +123,32 @@ export function Header({ onPresent, presentationActive = false }: { onPresent?: 
       document.removeEventListener('keydown', closeOnEscape);
       document.removeEventListener('pointerdown', closeOutside);
     };
-  }, [menuOpen]);
+  }, [menuOpen, aboutOpen]);
 
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
-      <div className="announcement no-print">
-        <div className="container announcement-inner">
-          <span><i aria-hidden="true" /> An early-stage concept. A responsible path forward.</span>
-          <a href="#application">2027 accelerator application preview <ArrowUpRight size={14} aria-hidden="true" /></a>
-        </div>
-      </div>
+      <div className="announcement no-print"><div className="container announcement-inner"><span>Early-stage concept. Educational prototype, not medical advice</span></div></div>
       <header ref={headerRef} className={`site-header no-print ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
-          <a href="#top" className="brand-link" aria-label="FearlessU home" onClick={() => setMenuOpen(false)}><Logo /></a>
+          <a href="#top" className="brand-link" aria-label="FearlessU home" onClick={closeMenus}><Logo /></a>
           <nav ref={navigationRef} id="primary-navigation" className={`primary-navigation ${menuOpen ? 'is-open' : ''}`}
             aria-label="Primary navigation" aria-hidden={isDesktop ? undefined : !menuOpen} inert={!isDesktop && !menuOpen}
             style={{ '--active-nav-left': `${indicator.left}px`, '--active-nav-width': `${indicator.width}px` } as CSSProperties}>
             <span className={`active-navigation-indicator ${indicator.ready ? 'is-measured' : ''}`} aria-hidden="true" />
-            {navigation.map((item, index) => (
-              <a key={item.id} ref={element => { if (element) linkRefs.current.set(item.id, element); else linkRefs.current.delete(item.id); }}
-                href={`#${item.id}`} className={active === item.id ? 'is-active' : ''}
-                style={{ '--navigation-order': index } as CSSProperties}
-                aria-current={active === item.id ? 'location' : undefined}
-                onClick={() => { setActive(item.id); setMenuOpen(false); }}>
-                {item.label}
-              </a>
+            {navigation.map((item, index) => item.id === 'team' ? (
+              <div ref={aboutRef} key={item.id} onBlur={event => { if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setAboutOpen(false); }} className={`navigation-about ${aboutOpen ? 'is-open' : ''}`} style={{ '--navigation-order': index } as CSSProperties}>
+                <a ref={element => { if (element) linkRefs.current.set(item.id, element); else linkRefs.current.delete(item.id); }} href="#team" className={`navigation-about__link ${activePrimary === 'team' ? 'is-active' : ''}`} aria-current={activePrimary === 'team' ? 'location' : undefined} onClick={() => { setActive('team'); closeMenus(); }}>About</a>
+                <button id="about-toggle" type="button" className="navigation-about__toggle" aria-label="About links" aria-expanded={aboutOpen} aria-controls="about-links" onClick={() => setAboutOpen(open => !open)}><ChevronDown size={16} aria-hidden="true" /></button>
+                <div id="about-links" className="navigation-about__links" aria-hidden={!aboutOpen} inert={!aboutOpen}>
+                  {aboutNavigation.map(link => <a key={link.id} href={`#${link.id}`} className={active === link.id ? 'is-active' : ''} aria-current={active === link.id ? 'location' : undefined} onClick={() => { setActive(link.id); closeMenus(); }}>{link.label}</a>)}
+                </div>
+              </div>
+            ) : (
+              <a key={item.id} ref={element => { if (element) linkRefs.current.set(item.id, element); else linkRefs.current.delete(item.id); }} href={`#${item.id}`} className={activePrimary === item.id ? 'is-active' : ''} style={{ '--navigation-order': index } as CSSProperties} aria-current={activePrimary === item.id ? 'location' : undefined} onClick={() => { setActive(item.id); closeMenus(); }}>{item.label}</a>
             ))}
-            <a className="mobile-demo" href="#journey" style={{ '--navigation-order': navigation.length } as CSSProperties} onClick={() => setMenuOpen(false)}>View demo</a>
-            <a className="mobile-contact" href="#contact" style={{ '--navigation-order': navigation.length + 1 } as CSSProperties}
-              onClick={() => setMenuOpen(false)}>Contact</a>
           </nav>
-          <div className="header-actions">
-            {onPresent && <button id="present-toggle" type="button" className="present-toggle" aria-pressed={presentationActive}
-              aria-label={presentationActive ? 'Focus presentation controls' : 'Start guided presentation'}
-              onClick={() => { setMenuOpen(false); if (presentationActive) (document.querySelector<HTMLElement>('#presentation-next:not([aria-disabled="true"])') ?? document.querySelector<HTMLElement>('#presentation-previous:not([aria-disabled="true"])') ?? document.getElementById('presentation-chapter'))?.focus({ preventScroll: true }); else onPresent(); }}>
-              <Presentation size={18} aria-hidden="true" /><span className="present-toggle__label">{presentationActive ? 'Presenting' : 'Present'}</span>
-            </button>}
-            <a href="#journey" className="button header-cta" onClick={() => setMenuOpen(false)}>View demo <ArrowUpRight size={17} aria-hidden="true" /></a>
-            <button id="menu-toggle" type="button" className={`menu-toggle ${menuOpen ? 'is-open' : ''}`} aria-expanded={menuOpen}
-              aria-controls="primary-navigation" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              onClick={() => setMenuOpen(open => !open)}>
-              <span className="menu-icon-stack" aria-hidden="true"><Menu size={23} className="menu-icon-bars" /><X size={23} className="menu-icon-close" /></span>
-            </button>
-          </div>
+          <div className="header-actions"><button id="menu-toggle" type="button" className={`menu-toggle ${menuOpen ? 'is-open' : ''}`} aria-expanded={menuOpen} aria-controls="primary-navigation" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} onClick={() => { setMenuOpen(open => !open); setAboutOpen(false); }}><span className="menu-icon-stack" aria-hidden="true"><Menu size={23} className="menu-icon-bars" /><X size={23} className="menu-icon-close" /></span></button></div>
         </div>
       </header>
     </>

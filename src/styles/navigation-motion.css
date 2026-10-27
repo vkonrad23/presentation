@@ -135,3 +135,37 @@
     transition: none;
   }
 }
+
+/* A quieter five-part header, with secondary company links behind About. */
+.announcement { background: #063F32; color: #E3ECE1; font-size: 14px; }
+.announcement-inner { justify-content: center; min-height: 40px; padding-block: 8px; text-align: center; }
+.announcement-inner > span { display: block; line-height: 1.5; }
+.primary-navigation > a, .navigation-about__link { min-width: 44px; font-size: 14px; }
+.navigation-about { position: relative; display: flex; align-items: center; }
+.navigation-about__toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; min-height: 44px; border-radius: 8px; color: #52645D; cursor: pointer; background: transparent; }
+.navigation-about__toggle:hover { color: #063F32; background: #EDF4EC; }
+.navigation-about__toggle svg { transition: transform 180ms ease; }
+.navigation-about.is-open .navigation-about__toggle svg { transform: rotate(180deg); }
+.navigation-about__links { position: absolute; z-index: 2; top: calc(100% + 8px); left: 0; display: grid; min-width: 208px; padding: 6px; border: 1px solid #DCE5DB; border-radius: 12px; background: #F7F8F2; box-shadow: 0 8px 22px #063f3212; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 160ms ease, transform 180ms ease, visibility 0s linear 180ms; }
+.navigation-about.is-open .navigation-about__links { opacity: 1; visibility: visible; transform: translateY(0); transition-delay: 0s; }
+.primary-navigation .navigation-about__links a { min-height: 44px; padding: 10px 14px; border-radius: 6px; font-size: 14px; }
+.primary-navigation .navigation-about__links a:hover, .primary-navigation .navigation-about__links a.is-active { background: #EDF4EC; }
+
+@media (min-width: 1280px) {
+  .header-actions { display: none; }
+}
+@media (max-width: 1279px) {
+  .header-actions { display: flex; }
+  .primary-navigation, .primary-navigation.is-open { grid-template-columns: 1fr; gap: 2px; }
+  .primary-navigation > a, .primary-navigation .navigation-about__link { min-height: 48px; font-size: 16px; }
+  .navigation-about { display: grid; grid-template-columns: minmax(0,1fr) 44px; opacity: 0; transform: translateY(-5px); transition: opacity 130ms ease, transform 170ms ease; }
+  .primary-navigation.is-open .navigation-about { opacity: 1; transform: none; transition-delay: calc(var(--navigation-order,0) * 22ms + 30ms); }
+  .navigation-about__links { position: static; grid-column: 1 / -1; min-width: 0; max-height: 0; overflow: hidden; padding: 0 8px; border: 0; border-radius: 0; box-shadow: none; transform: none; transition: max-height 220ms ease, opacity 160ms ease, visibility 0s linear 220ms; }
+  .navigation-about.is-open .navigation-about__links { max-height: 180px; visibility: visible; transition-delay: 0s; }
+  .primary-navigation .navigation-about__links a { min-height: 48px; padding-left: 24px; font-size: 15px; }
+  .navigation-about__toggle { min-height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigation-about, .primary-navigation.is-open .navigation-about,
+  .navigation-about__toggle svg, .navigation-about__links { transition: none; }
+}

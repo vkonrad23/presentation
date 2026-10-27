@@ -1,6 +1,6 @@
-import { lazy, Suspense, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { usePageMotion } from './hooks/useMotion';
-import { useSectionNavigation } from './hooks/useSectionNavigation';
+import { navigateToSection, useSectionNavigation } from './hooks/useSectionNavigation';
 import { Header } from './components/Header';
 import { PresentationControls } from './components/PresentationControls';
 import { Hero, HowItWorks, ProblemSection, SolutionSection } from './components/Introduction';
@@ -17,9 +17,11 @@ export default function App() {
   const [presenting, setPresenting] = useState(false);
   usePageMotion(pageRef);
   useSectionNavigation(pageRef);
+  // The presentation now starts from the footer; begin its walkthrough at the overview.
+  useEffect(() => { if (presenting) navigateToSection('top', { focus: false }); }, [presenting]);
   return (
     <div id="top" ref={pageRef}>
-      <Header onPresent={() => setPresenting(true)} presentationActive={presenting} />
+      <Header />
       <main id="main" tabIndex={-1}>
         <Hero />
         <ProblemSection />
@@ -50,7 +52,7 @@ export default function App() {
         <FAQ />
         <ContactSection />
       </main>
-      <Footer />
+      <Footer onPresent={() => setPresenting(true)} presentationActive={presenting} />
       <PresentationControls active={presenting} onExit={() => setPresenting(false)} />
     </div>
   );

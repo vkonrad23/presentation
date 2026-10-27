@@ -125,7 +125,6 @@ export const footerGroups = [
     title: 'Product',
     links: [
       { label: 'Product overview', href: '#product' },
-      { label: 'Explore the demo', href: '#journey' },
       { label: 'Development roadmap', href: '#milestones' },
     ],
   },
@@ -134,7 +133,6 @@ export const footerGroups = [
     links: [
       { label: 'Validation plan', href: '#evidence' },
       { label: 'Illustrative impact', href: '#impact' },
-      { label: 'Accelerator case', href: '#accelerator' },
     ],
   },
   {

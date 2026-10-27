@@ -46,7 +46,12 @@ export function PresentationControls({ active, onExit }: { active: boolean; onEx
 
   const exit = useCallback(() => {
     onExit();
-    window.requestAnimationFrame(() => document.getElementById('present-toggle')?.focus({ preventScroll: true }));
+    window.requestAnimationFrame(() => {
+      const trigger = document.getElementById('present-toggle');
+      // The trigger lives in the footer; return to a visible keyboard context on exit.
+      trigger?.scrollIntoView({ behavior: 'instant', block: 'center' });
+      trigger?.focus({ preventScroll: true });
+    });
   }, [onExit]);
 
   useLayoutEffect(() => {
@@ -58,7 +63,7 @@ export function PresentationControls({ active, onExit }: { active: boolean; onEx
     const previous = element.getAttribute('data-presentation-active');
     element.setAttribute('data-presentation-active', 'true');
     const focusFrame = window.requestAnimationFrame(() => {
-      const target = document.getElementById(initial < chapters.length - 1 ? 'presentation-next' : 'presentation-previous');
+      const target = document.getElementById('presentation-chapter');
       target?.focus({ preventScroll: true });
     });
     return () => {
@@ -117,7 +122,7 @@ export function PresentationControls({ active, onExit }: { active: boolean; onEx
       const focused = document.activeElement;
       const editing = focused instanceof HTMLElement && (focused.matches('textarea, input:not([type="range"]):not([type="radio"]):not([type="checkbox"]):not([type="button"]):not([type="submit"])') || focused.isContentEditable);
       const mobileEditing = window.innerWidth < 768 && editing;
-      setObscured(Boolean(document.querySelector('dialog[open], #menu-toggle[aria-expanded="true"]')) || mobileEditing);
+      setObscured(Boolean(document.querySelector('dialog[open], #menu-toggle[aria-expanded="true"], #about-toggle[aria-expanded="true"]')) || mobileEditing);
     };
     const observer = new MutationObserver(update);
     observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open', 'aria-expanded'] });
@@ -137,7 +142,7 @@ export function PresentationControls({ active, onExit }: { active: boolean; onEx
     if (!active) return;
     const keydown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      if (document.querySelector('dialog[open], #menu-toggle[aria-expanded="true"]')) return;
+      if (document.querySelector('dialog[open], #menu-toggle[aria-expanded="true"], #about-toggle[aria-expanded="true"]')) return;
       if (event.key === 'Escape') { event.preventDefault(); exit(); return; }
       const target = event.target;
       if (!(target instanceof HTMLElement) || !controlsRef.current?.contains(target)) return;

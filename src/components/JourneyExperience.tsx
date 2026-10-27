@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import {
   ArrowRight, Check, CheckCheck, CheckCircle2, ChevronRight, Circle, Compass,
   Feather, HeartHandshake, Leaf, Lightbulb, LockKeyhole, Pause, Play,
@@ -45,12 +45,13 @@ export function ProductDemo() {
   const [anxiety, setAnxiety] = useState(4);
   const [applied, setApplied] = useState({ scenario: 'speaking' as DemoScenarioKey, anxiety: 4 });
   const [updated, setUpdated] = useState(false);
-  const [paused, setPaused] = useState(false);
   const recommendation = getHeroRecommendation(applied.scenario, applied.anxiety);
   const changed = applied.anxiety !== anxiety;
   const recommendationRef = useRef<HTMLDivElement>(null);
+  const difficulty = anxiety === 0 ? 'no difficulty' : anxiety <= 3 ? 'slightly difficult' : anxiety <= 6 ? 'moderately difficult' : anxiety <= 8 ? 'very difficult' : 'extremely difficult';
+  const color = [8, 117, 77].map((channel, index) => Math.round(channel + ([166, 106, 20][index] - channel) * anxiety / 10));
 
-  useContentTransition(recommendationRef, `${applied.scenario}:${applied.anxiety}:${paused}`, {
+  useContentTransition(recommendationRef, `${applied.scenario}:${applied.anxiety}`, {
     duration: 360,
     distance: 8,
   });
@@ -58,62 +59,81 @@ export function ProductDemo() {
   function adapt() {
     setApplied({ scenario, anxiety });
     setUpdated(true);
-    setPaused(false);
   }
 
   function chooseScenario(value: DemoScenarioKey) {
-    setScenario(value); setApplied({ scenario: value, anxiety }); setUpdated(false); setPaused(false);
+    setScenario(value);
+    setApplied({ scenario: value, anxiety });
+    setUpdated(false);
+  }
+
+  // Reset affects this example only; the main journey keeps its own temporary state.
+  function reset() {
+    setScenario('speaking');
+    setAnxiety(4);
+    setApplied({ scenario: 'speaking', anxiety: 4 });
+    setUpdated(false);
   }
 
   return (
-    <div className="relative w-full" data-testid="product-demo">
-      <div className="relative rounded-[28px] border border-[#DCE5DB] bg-white p-5 text-[#10251F] shadow-[0_24px_70px_-34px_rgba(6,63,50,0.28)] sm:p-6">
+    <div className="hero-demo relative w-full" data-testid="product-demo">
+      <div className="relative rounded-[28px] border border-[#DCE5DB] bg-white p-4 text-[#10251F] shadow-[0_24px_70px_-34px_rgba(6,63,50,0.28)] sm:p-6">
         <div className="mb-4 flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EDF4EC] text-[#063F32]"><Leaf size={23} /></span>
-            <div><p className="mb-1 text-xs text-[#52645D]">A small step, chosen by you</p><h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Today’s Fear Journey</h2></div>
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EDF4EC] text-[#063F32]"><Leaf size={23} aria-hidden="true" /></span>
+            <div className="min-w-0"><p className="mb-1 text-sm text-[#52645D]">A small step, chosen by you</p><h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Today’s Fear Journey</h2></div>
           </div>
-          <span className="rounded-full border border-[#E6D391] bg-[#FFF8E7] px-2.5 py-1.5 text-xs font-semibold text-[#6E5313]">Prototype</span>
         </div>
 
         <div className="mb-4">
-          <label htmlFor="hero-scenario" className="mb-2 block text-xs font-semibold uppercase tracking-[.1em] text-[#52645D]">Explore a scenario</label>
-          <select id="hero-scenario" className="field w-full bg-[#F7F8F2] text-sm" value={scenario} onChange={(event) => chooseScenario(event.target.value as DemoScenarioKey)}>
+          <label htmlFor="hero-scenario" className="mb-2 block text-sm font-semibold uppercase tracking-[.1em] text-[#52645D]">Explore a scenario</label>
+          <select id="hero-scenario" className="field w-full bg-[#F7F8F2] text-base" value={scenario} onChange={(event) => chooseScenario(event.target.value as DemoScenarioKey)}>
             {demoScenarios.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
         </div>
 
-        <RangeField id="hero-anxiety" label="How does it feel right now?" value={anxiety} onChange={setAnxiety} />
-
-        <div ref={recommendationRef} className="motion-state-panel mt-4 min-h-[224px] rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-4" data-testid="hero-recommendation">
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <span className="flex items-center gap-2 text-xs font-semibold text-[#08754D]"><Compass size={16} /> Your suggested next step</span>
-            <span className="text-xs text-[#52645D]">{paused ? 'Paused' : 'Private practice'}</span>
+        <div>
+          <div className="flex items-center justify-between gap-3">
+            <label htmlFor="hero-anxiety" className="text-sm font-semibold text-[#10251F]">How does it feel right now?</label>
+            <output htmlFor="hero-anxiety" className="hero-demo-rating rounded-lg bg-[#EDF4EC] px-3 py-1 text-[#063F32]">
+              {anxiety}<span className="text-sm font-semibold text-[#52645D]"> / 10</span>
+            </output>
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-[#063F32]">{paused ? 'Take the time you need.' : recommendation.title}</h3>
-          <p className="min-h-[72px] text-base leading-relaxed text-[#10251F]">
-            {paused ? 'The practice is paused. Nothing needs to be completed. Resume only if you choose.' : recommendation.activity}
-          </p>
-          <div className="mt-3 border-t border-[#DCE5DB] pt-3">
-            <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-[#063F32]"><Lightbulb size={14} /> Why this suggestion?</p>
-            <p className="text-xs leading-relaxed text-[#52645D]">{recommendation.reason}</p>
-          </div>
+          <input
+            id="hero-anxiety" type="range" role="slider" min={0} max={10} step={1} value={anxiety}
+            aria-valuemin={0} aria-valuemax={10} aria-valuenow={anxiety}
+            aria-valuetext={`${anxiety} out of 10, ${difficulty}`}
+            onChange={(event) => setAnxiety(Number(event.target.value))}
+            className="hero-demo-slider block w-full"
+            style={{ '--hero-range-color': `rgb(${color.join(' ')})`, '--hero-range-progress': `calc(${anxiety * 10}% + ${10 - anxiety * 2}px)` } as CSSProperties}
+          />
+          <div className="flex justify-between gap-3 text-sm text-[#52645D]"><span>Comfortable</span><span>Very difficult</span></div>
         </div>
 
-        <p role="status" className="min-h-12 py-2 text-xs leading-relaxed text-[#52645D]">
-          {changed ? 'Your check-in changed. Adapt when you are ready.' : updated ? `Updated for ${applied.anxiety}/10 using predefined local rules. Your choice comes first.` : 'Predefined local rules demonstrate personalization. No live AI is running.'}
+        <div ref={recommendationRef} className="motion-state-panel mt-4 rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-4" data-testid="hero-recommendation">
+          <div className="hero-demo-suggestion-label mb-3 flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-sm font-semibold text-[#08754D]"><Compass size={16} aria-hidden="true" /> Your suggested next step</span>
+            <span className="text-sm text-[#52645D]">Private practice</span>
+          </div>
+          <h3 className="mb-2 text-lg font-semibold text-[#063F32]">{recommendation.title}</h3>
+          <p className="min-h-[72px] text-base leading-relaxed text-[#10251F]">{recommendation.activity}</p>
+          <details className="hero-demo-explanation mt-3 border-t border-[#DCE5DB]">
+            <summary className="flex min-h-11 items-center gap-2 text-sm font-semibold text-[#063F32]"><Lightbulb size={16} aria-hidden="true" /> Why this suggestion?<ChevronRight className="hero-demo-explanation-arrow ml-auto" size={17} aria-hidden="true" /></summary>
+            <p className="pb-1 text-sm leading-relaxed text-[#52645D]">{recommendation.reason}</p>
+          </details>
+        </div>
+
+        <p role="status" className="sr-only">
+          {changed ? 'Your check-in changed. Adapt when you are ready.' : updated ? `Updated for ${applied.anxiety} out of 10. Your choice comes first.` : ''}
         </p>
-        <div className="grid grid-cols-[1fr_auto] gap-2">
-          <button className="button w-full justify-center" type="button" onClick={adapt}>Adapt next step <ArrowRight size={17} /></button>
-          <button
-            type="button" className="button button-secondary min-w-11 px-3"
-            onClick={() => setPaused((value) => !value)} aria-pressed={paused}
-            aria-label={paused ? 'Resume hero practice' : 'Pause hero practice'}
-          >
-            {paused ? <Play size={17} /> : <Pause size={17} />}
-          </button>
+        <div className="hero-demo-actions mt-4 grid grid-cols-[1fr_auto] gap-2">
+          <button className="button w-full justify-center" type="button" onClick={adapt}>Adapt next step <ArrowRight size={17} aria-hidden="true" /></button>
+          <button type="button" className="button button-secondary px-3" onClick={reset}><RotateCcw size={17} aria-hidden="true" /> Reset</button>
         </div>
-        <p className="mt-3 text-center text-xs leading-relaxed text-[#52645D]">Educational prototype. Not medical advice.<br />No diagnosis · no live AI · no information saved</p>
+        {/* Educational status is in the hero badge and announcement; keep these limits compact. */}
+        <p className="hero-demo-disclaimer mt-3 text-center text-sm leading-relaxed text-[#52645D]"><span>No medical advice or diagnosis.</span><span>Local rules · No AI or saved data.</span></p>
+        {/* A global directory avoids assuming the visitor's location or emergency number. */}
+        <a className="hero-demo-urgent text-sm text-[#063F32]" href="https://findahelpline.com/">Need urgent help?</a>
       </div>
     </div>
   );

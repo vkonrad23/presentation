@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useRef } from 'react';
+import { usePageMotion } from './hooks/useMotion';
 import { Header } from './components/Header';
 import { Hero, HowItWorks, ProblemSection, SolutionSection } from './components/Introduction';
 import { JourneyDemo, SampleJourney } from './components/JourneyExperience';
@@ -10,8 +11,10 @@ import { ContactSection, FAQ, Footer } from './components/ContactFooter';
 const PitchTimer = lazy(() => import('./components/PitchTimer').then(module => ({ default: module.PitchTimer })));
 
 export default function App() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  usePageMotion(pageRef);
   return (
-    <div id="top">
+    <div id="top" ref={pageRef}>
       <Header />
       <main id="main" tabIndex={-1}>
         <Hero />

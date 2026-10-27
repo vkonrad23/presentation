@@ -134,3 +134,9 @@ Interface checks do not establish clinical suitability, safety, effectiveness, o
 ## Redesign validation
 
 The production build passed TypeScript checking. Chromium checks passed for the three scenarios, all seven category templates, difficulty adaptation, two practice/reflection loops, memory-only history, pause/stop/reset, recognized goal and reflection risk language, keyboard journey tabs, all dashboard date filters, contact validation, legal dialogs, local downloads/printing, and pitch countdown/teleprompter controls. Layout checks at 320, 375, 768, 1024, 1440, and 1920 px found no page overflow or visible text below 12 px; visible controls met the 44 px target check. Automated WCAG A/AA checks at mobile and desktop reported no violations. This is prototype interface validation, not a clinical or complete manual accessibility evaluation.
+
+## Motion and transitions
+
+The motion layer uses native CSS and the Web Animations API; no animation dependency is required. Shared timing and interaction styles live in `src/styles/motion.css` and `src/styles/navigation-motion.css`. `src/hooks/useMotion.ts` provides one-time, staggered page reveals, cancellable native disclosure transitions, and discrete content transitions that preserve controls and draft state. Navigation has a measured sliding indicator and an accessible animated mobile menu; dashboard charts interpolate their geometry; demo and pitch state feedback remains restrained.
+
+System reduced-motion preferences apply on load and when changed while the site is open. Keyboard focus and deep links expose content immediately; critical validation and crisis messages remain immediate. Unsupported animation APIs fall back to usable native content. Print preparation clears transient motion styles so unrevealed sections are included.

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Activity,
   ArrowDownRight,
@@ -15,6 +15,7 @@ import {
   type DashboardPoint,
   type DashboardRange,
 } from '../data/dashboardContent';
+import { useContentTransition, useReducedMotion } from '../hooks/useMotion';
 
 const metricLabel = 'Illustrative prototype metric';
 
@@ -25,6 +26,7 @@ function ConfidenceChart({
   points: DashboardPoint[];
   range: DashboardRange;
 }) {
+  const reducedMotion = useReducedMotion();
   const width = 600;
   const height = 200;
   const padding = 8;
@@ -34,8 +36,13 @@ function ConfidenceChart({
     x: padding + (index / (points.length - 1)) * (width - padding * 2),
     y: plotBottom - (point.confidence / 10) * (height - padding * 2),
   }));
-  const line = coordinates.map((point) => point.x + ',' + point.y).join(' ');
-  const area = padding + ',' + plotBottom + ' ' + line + ' ' + (width - padding) + ',' + plotBottom;
+  const linePath = coordinates
+    .map((point, index) => (index === 0 ? 'M ' : 'L ') + point.x + ' ' + point.y)
+    .join(' ');
+  const areaPath = 'M ' + padding + ' ' + plotBottom + ' ' + coordinates
+    .map((point) => 'L ' + point.x + ' ' + point.y)
+    .join(' ') + ' L ' + (width - padding) + ' ' + plotBottom + ' Z';
+  const transitionDuration = reducedMotion ? '0ms' : undefined;
 
   return (
     <figure className="min-w-0" aria-labelledby="impact-chart-title">
@@ -52,7 +59,7 @@ function ConfidenceChart({
         <svg
           viewBox={'0 0 ' + width + ' ' + height}
           preserveAspectRatio="none"
-          className="block h-44 min-w-0 flex-1 sm:h-52"
+          className="motion-chart block h-44 min-w-0 flex-1 sm:h-52"
         >
           {[0, 5, 10].map((value) => {
             const y = plotBottom - (value / 10) * (height - padding * 2);
@@ -69,9 +76,16 @@ function ConfidenceChart({
               />
             );
           })}
-          <polygon points={area} fill="#EDF4EC" />
-          <polyline
-            points={line}
+          <path
+            d={areaPath}
+            style={{ d: 'path("' + areaPath + '")', transitionDuration }}
+            className="motion-chart-area"
+            fill="#EDF4EC"
+          />
+          <path
+            d={linePath}
+            style={{ d: 'path("' + linePath + '")', transitionDuration }}
+            className="motion-chart-line"
             fill="none"
             stroke="#08754D"
             strokeWidth="3"
@@ -79,11 +93,13 @@ function ConfidenceChart({
             strokeLinejoin="round"
             vectorEffect="non-scaling-stroke"
           />
-          {coordinates.map((point) => (
+          {coordinates.map((point, index) => (
             <circle
-              key={point.label}
+              key={index}
               cx={point.x}
               cy={point.y}
+              style={{ cy: point.y + 'px', transitionDuration }}
+              className="motion-chart-point"
               r="4"
               fill="#08754D"
               vectorEffect="non-scaling-stroke"
@@ -122,6 +138,10 @@ function ConfidenceChart({
 
 export function ImpactDashboard() {
   const [range, setRange] = useState<DashboardRange>(30);
+  const metricsRef = useRef<HTMLDivElement>(null);
+  const insightRef = useRef<HTMLElement>(null);
+  useContentTransition(metricsRef, range, { duration: 280, distance: 5 });
+  useContentTransition(insightRef, range, { duration: 280, distance: 5, delay: 35 });
   const period = dashboardPeriods[range];
   const metrics = [
     {
@@ -188,7 +208,7 @@ export function ImpactDashboard() {
                 onClick={() => setRange(days)}
                 aria-pressed={range === days}
                 className={[
-                  'min-h-11 rounded-full px-4 text-sm font-semibold focus-visible:!outline-[#E8B93F]',
+                  'dashboard-filter min-h-11 rounded-full px-4 text-sm font-semibold focus-visible:!outline-[#E8B93F]',
                   range === days
                     ? 'bg-[#E8B93F] text-[#10251F]'
                     : 'text-white hover:bg-white/10',
@@ -208,7 +228,7 @@ export function ImpactDashboard() {
           </p>
         </div>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={metricsRef} className="dashboard-metrics mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {metrics.map(({ label, value, note, Icon }) => (
             <article key={label} className="min-w-0 rounded-2xl border border-white/20 bg-white/[0.045] p-5 sm:p-6">
               <div className="flex items-center justify-between gap-3">
@@ -233,7 +253,7 @@ export function ImpactDashboard() {
           <div className="min-w-0 rounded-2xl bg-[#F7F8F2] p-5 sm:p-7">
             <ConfidenceChart points={period.points} range={range} />
           </div>
-          <article className="rounded-2xl border border-white/20 bg-white/[0.045] p-6 sm:p-7">
+          <article ref={insightRef} className="dashboard-insight rounded-2xl border border-white/20 bg-white/[0.045] p-6 sm:p-7">
             <div className="flex items-center gap-3 text-[#E8B93F]">
               <Route size={23} aria-hidden="true" />
               <span className="text-xs font-semibold tracking-wide uppercase">An example to reflect on</span>

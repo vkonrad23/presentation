@@ -1,0 +1,137 @@
+/* Navigation stays mounted so entering and leaving states share one accessible DOM. */
+.site-header {
+  backdrop-filter: blur(0);
+  transition: background-color 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
+}
+
+.site-header.is-scrolled {
+  box-shadow: 0 8px 28px #063f320a;
+}
+
+.primary-navigation a {
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.primary-navigation a.is-active::after {
+  display: none;
+}
+
+.active-navigation-indicator {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  width: var(--active-nav-width, 0px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--forest, #063F32);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(var(--active-nav-left, 0px), 0, 0);
+  transition: transform 320ms cubic-bezier(.22, .7, .22, 1), width 320ms cubic-bezier(.22, .7, .22, 1), opacity 140ms ease;
+}
+
+.active-navigation-indicator.is-measured {
+  opacity: 1;
+}
+
+.menu-icon-stack {
+  position: relative;
+  display: block;
+  width: 23px;
+  height: 23px;
+  pointer-events: none;
+}
+
+.menu-icon-stack svg {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  transition: opacity 160ms ease, transform 260ms cubic-bezier(.22, .7, .22, 1);
+}
+
+.menu-icon-bars {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+.menu-icon-close {
+  opacity: 0;
+  transform: rotate(-65deg) scale(.72);
+}
+
+.menu-toggle.is-open .menu-icon-bars {
+  opacity: 0;
+  transform: rotate(65deg) scale(.72);
+}
+
+.menu-toggle.is-open .menu-icon-close {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+@media (min-width: 1280px) {
+  .primary-navigation {
+    position: relative;
+  }
+}
+
+@media (max-width: 1279px) {
+  .primary-navigation,
+  .primary-navigation.is-open {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+  }
+
+  .primary-navigation {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, -10px, 0);
+    transition: opacity 170ms ease, transform 210ms cubic-bezier(.22, .7, .22, 1), visibility 0s linear 210ms;
+  }
+
+  .primary-navigation.is-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    transition: opacity 200ms ease, transform 260ms cubic-bezier(.22, .7, .22, 1), visibility 0s linear;
+  }
+
+  .primary-navigation a {
+    opacity: 0;
+    transform: translate3d(0, -5px, 0);
+    transition: opacity 130ms ease, transform 170ms cubic-bezier(.22, .7, .22, 1), color 160ms ease, background-color 160ms ease;
+  }
+
+  .primary-navigation.is-open a {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition-delay: calc(var(--navigation-order, 0) * 22ms + 30ms), calc(var(--navigation-order, 0) * 22ms + 30ms), 0s, 0s;
+  }
+
+  .active-navigation-indicator {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .primary-navigation,
+  .primary-navigation.is-open {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .primary-navigation,
+  .primary-navigation.is-open,
+  .primary-navigation a,
+  .primary-navigation.is-open a,
+  .active-navigation-indicator,
+  .menu-icon-stack svg {
+    transition: none;
+  }
+}

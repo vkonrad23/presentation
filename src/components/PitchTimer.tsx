@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Clock3, Expand, Pause, Play, RotateCcw, Video, X } from 'lucide-react';
 import { pitchScript } from '../data/dashboardContent';
+import { useContentTransition, useReducedMotion } from '../hooks/useMotion';
 
 function formatTime(seconds: number) {
   return Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
@@ -12,7 +13,11 @@ export function PitchTimer() {
   const [teleprompter, setTeleprompter] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const scriptRef = useRef<HTMLDivElement>(null);
+  const statusRef = useRef<HTMLParagraphElement>(null);
   const remainingRef = useRef(remaining);
+  const reducedMotion = useReducedMotion();
+  const timerState = remaining === 0 ? 'finished' : running ? 'running' : remaining < 60 ? 'paused' : 'ready';
+  useContentTransition(statusRef, timerState, { duration: 220, distance: 3 });
 
   useEffect(() => {
     remainingRef.current = remaining;
@@ -41,14 +46,14 @@ export function PitchTimer() {
   useEffect(() => {
     const element = scriptRef.current;
     if (!teleprompter || !element) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (reducedMotion) return;
 
     const scrollableHeight = element.scrollHeight - element.clientHeight;
     element.scrollTo({
       top: (1 - remaining / 60) * scrollableHeight,
       behavior: running ? 'smooth' : 'auto',
     });
-  }, [remaining, running, teleprompter]);
+  }, [remaining, running, teleprompter, reducedMotion]);
 
   function resetTimer() {
     setRunning(false);
@@ -61,7 +66,7 @@ export function PitchTimer() {
       <button
         type="button"
         className={[
-          'button min-w-[208px]',
+          'pitch-control button min-w-[208px]',
           inDialog ? '!border-[#E8B93F] !bg-[#E8B93F] !text-[#10251F]' : '',
         ].join(' ')}
         onClick={() => setRunning(true)}
@@ -73,7 +78,7 @@ export function PitchTimer() {
       <button
         type="button"
         className={[
-          'button button-secondary',
+          'pitch-control button button-secondary',
           inDialog ? '!border-white/30 !bg-transparent !text-white' : '',
         ].join(' ')}
         onClick={() => setRunning(false)}
@@ -84,7 +89,7 @@ export function PitchTimer() {
       <button
         type="button"
         className={[
-          'button button-secondary',
+          'pitch-control button button-secondary',
           inDialog ? '!border-white/30 !bg-transparent !text-white' : '',
         ].join(' ')}
         onClick={resetTimer}
@@ -95,7 +100,7 @@ export function PitchTimer() {
   );
 
   const status = remaining === 0
-    ? 'Time is up. Reset to rehearse again.'
+    ? 'Rehearsal complete. Reset when you’re ready.'
     : running
       ? 'Rehearsal in progress'
       : remaining < 60
@@ -103,7 +108,7 @@ export function PitchTimer() {
         : 'Ready when you are';
 
   return (
-    <section id="pitch" className="section bg-[#EDF4EC]" aria-labelledby="pitch-title">
+    <section id="pitch" className="section bg-[#EDF4EC]" aria-labelledby="pitch-title" data-timer-state={timerState}>
       <div className="container">
         <div className="grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
           <div>
@@ -134,7 +139,7 @@ export function PitchTimer() {
                 <p className="text-xs font-semibold tracking-[0.12em] text-[#52645D] uppercase">Pitch rehearsal</p>
                 <h3 className="mt-2 text-lg font-semibold text-[#10251F]">One fear. One manageable step.</h3>
               </div>
-              <span className="inline-flex min-w-[100px] items-center justify-center gap-2 rounded-full bg-[#FFF8E7] px-4 py-3 text-xl font-semibold tabular-nums text-[#063F32]">
+              <span className="pitch-timer-display inline-flex min-w-[100px] items-center justify-center gap-2 rounded-full bg-[#FFF8E7] px-4 py-3 text-xl font-semibold tabular-nums text-[#063F32]" data-state={timerState}>
                 <Clock3 size={18} aria-hidden="true" />
                 <output aria-label="Pitch time remaining" data-testid="pitch-time">{formatTime(remaining)}</output>
               </span>
@@ -159,11 +164,14 @@ export function PitchTimer() {
               <button
                 type="button"
                 onClick={() => setTeleprompter(true)}
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg px-1 text-sm font-semibold text-[#063F32] hover:text-[#08754D]"
+                className="pitch-control inline-flex min-h-11 items-center gap-2 rounded-lg px-1 text-sm font-semibold text-[#063F32] hover:text-[#08754D]"
               >
                 <Expand size={17} aria-hidden="true" />Teleprompter mode
               </button>
-              <p className="min-h-5 text-xs leading-relaxed text-[#52645D]" role="status">{status}</p>
+              <p ref={statusRef} className="pitch-status inline-flex min-h-5 items-center gap-2 text-xs leading-relaxed text-[#52645D]" data-state={timerState} role="status">
+                <span className="pitch-status-dot" aria-hidden="true" />
+                {status}
+              </p>
             </div>
           </div>
         </div>
@@ -182,7 +190,7 @@ export function PitchTimer() {
             <h3 id="teleprompter-title" className="mt-1 text-base font-semibold">Teleprompter mode</h3>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-            <span className="min-w-[60px] text-right text-2xl font-semibold tabular-nums" aria-label={'Time remaining: ' + formatTime(remaining)}>
+            <span className="pitch-timer-display min-w-[60px] text-right text-2xl font-semibold tabular-nums" data-state={timerState} aria-label={'Time remaining: ' + formatTime(remaining)}>
               {formatTime(remaining)}
             </span>
             <button

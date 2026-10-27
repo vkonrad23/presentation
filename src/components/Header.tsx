@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { navigation } from '../data/content';
 
@@ -19,7 +19,54 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState('product');
   const [scrolled, setScrolled] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1280px)').matches);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
   const headerRef = useRef<HTMLElement>(null);
+  const navigationRef = useRef<HTMLElement>(null);
+  const linkRefs = useRef(new Map<string, HTMLAnchorElement>());
+
+  useEffect(() => {
+    const viewport = window.matchMedia('(min-width: 1280px)');
+    const updateViewport = () => {
+      setIsDesktop(viewport.matches);
+      if (viewport.matches) setMenuOpen(false);
+    };
+    updateViewport();
+    viewport.addEventListener('change', updateViewport);
+    return () => viewport.removeEventListener('change', updateViewport);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!isDesktop) {
+      setIndicator(previous => previous.ready ? { ...previous, ready: false } : previous);
+      return;
+    }
+    const nav = navigationRef.current;
+    const link = linkRefs.current.get(active);
+    if (!nav || !link) return;
+    let frame = 0;
+    let disposed = false;
+    const measure = () => {
+      frame = 0;
+      const navBounds = nav.getBoundingClientRect();
+      const linkBounds = link.getBoundingClientRect();
+      const next = { left: linkBounds.left - navBounds.left + nav.scrollLeft, width: linkBounds.width, ready: true };
+      setIndicator(previous => previous.left === next.left && previous.width === next.width && previous.ready ? previous : next);
+    };
+    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(measure); };
+    const observer = new ResizeObserver(schedule);
+    observer.observe(nav);
+    linkRefs.current.forEach(element => observer.observe(element));
+    window.addEventListener('resize', schedule);
+    document.fonts.ready.then(() => { if (!disposed) schedule(); });
+    measure();
+    return () => {
+      disposed = true;
+      observer.disconnect();
+      window.removeEventListener('resize', schedule);
+      window.cancelAnimationFrame(frame);
+    };
+  }, [active, isDesktop]);
 
   useEffect(() => {
     let frame = 0;
@@ -56,14 +103,11 @@ export function Header() {
     const closeOutside = (event: PointerEvent) => {
       if (!headerRef.current?.contains(event.target as Node)) setMenuOpen(false);
     };
-    const closeOnWideScreen = () => { if (window.innerWidth >= 1280) setMenuOpen(false); };
     document.addEventListener('keydown', closeOnEscape);
     document.addEventListener('pointerdown', closeOutside);
-    window.addEventListener('resize', closeOnWideScreen);
     return () => {
       document.removeEventListener('keydown', closeOnEscape);
       document.removeEventListener('pointerdown', closeOutside);
-      window.removeEventListener('resize', closeOnWideScreen);
     };
   }, [menuOpen]);
 
@@ -79,23 +123,29 @@ export function Header() {
       <header ref={headerRef} className={`site-header no-print ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
           <a href="#top" className="brand-link" aria-label="FearlessU home" onClick={() => setMenuOpen(false)}><Logo /></a>
-          <nav id="primary-navigation" className={`primary-navigation ${menuOpen ? 'is-open' : ''}`} aria-label="Primary navigation">
-            {navigation.map(item => (
-              <a key={item.id} href={`#${item.id}`} className={active === item.id ? 'is-active' : ''}
+          <nav ref={navigationRef} id="primary-navigation" className={`primary-navigation ${menuOpen ? 'is-open' : ''}`}
+            aria-label="Primary navigation" aria-hidden={isDesktop ? undefined : !menuOpen} inert={!isDesktop && !menuOpen}
+            style={{ '--active-nav-left': `${indicator.left}px`, '--active-nav-width': `${indicator.width}px` } as CSSProperties}>
+            <span className={`active-navigation-indicator ${indicator.ready ? 'is-measured' : ''}`} aria-hidden="true" />
+            {navigation.map((item, index) => (
+              <a key={item.id} ref={element => { if (element) linkRefs.current.set(item.id, element); else linkRefs.current.delete(item.id); }}
+                href={`#${item.id}`} className={active === item.id ? 'is-active' : ''}
+                style={{ '--navigation-order': index } as CSSProperties}
                 aria-current={active === item.id ? 'location' : undefined}
                 onClick={() => { setActive(item.id); setMenuOpen(false); }}>
                 {item.label}
               </a>
             ))}
-            <a className="mobile-contact" href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
+            <a className="mobile-contact" href="#contact" style={{ '--navigation-order': navigation.length } as CSSProperties}
+              onClick={() => setMenuOpen(false)}>Contact</a>
           </nav>
           <div className="header-actions">
             <a className="header-contact" href="#contact">Contact</a>
             <a href="#journey" className="button header-cta" onClick={() => setMenuOpen(false)}>View demo <ArrowUpRight size={17} aria-hidden="true" /></a>
-            <button id="menu-toggle" type="button" className="menu-toggle" aria-expanded={menuOpen}
+            <button id="menu-toggle" type="button" className={`menu-toggle ${menuOpen ? 'is-open' : ''}`} aria-expanded={menuOpen}
               aria-controls="primary-navigation" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X size={23} /> : <Menu size={23} />}
+              onClick={() => setMenuOpen(open => !open)}>
+              <span className="menu-icon-stack" aria-hidden="true"><Menu size={23} className="menu-icon-bars" /><X size={23} className="menu-icon-close" /></span>
             </button>
           </div>
         </div>

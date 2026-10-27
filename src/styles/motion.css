@@ -1,0 +1,78 @@
+:root {
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --motion-fast: 180ms;
+  --motion-control: 260ms;
+  --motion-panel: 340ms;
+}
+
+.site-header { transition: background-color 280ms ease, box-shadow 280ms ease, border-color 280ms ease; }
+.button { transition: background-color var(--motion-control) ease, border-color var(--motion-control) ease, color var(--motion-control) ease, box-shadow var(--motion-control) ease, transform var(--motion-control) var(--motion-ease); }
+.button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px #063f3218; }
+.button:active:not(:disabled) { transform: translateY(0); box-shadow: 0 2px 8px #063f3210; }
+.button svg.lucide-arrow-right, .button svg.lucide-arrow-up-right,
+.text-link svg, .hero-secondary svg { transition: transform 280ms var(--motion-ease); }
+.button:hover:not(:disabled) svg.lucide-arrow-right, .text-link:hover svg, .hero-secondary:hover svg { transform: translateX(3px); }
+.button:hover:not(:disabled) svg.lucide-arrow-up-right { transform: translate(2px, -2px); }
+.field { transition: border-color 220ms ease, box-shadow 220ms ease, background-color 220ms ease; }
+.field:hover { border-color: #8FAB98; }
+.field:focus { border-color: #08754D; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { transition-property: background-color, border-color, color, transform; }
+.capability-row { transition: background-color 300ms ease; }
+.capability-row:hover { background-color: #EDF4EC66; }
+.journey-step-marker { transition: background-color 340ms ease, border-color 340ms ease, color 340ms ease, box-shadow 340ms ease; }
+.motion-progress { transition: width 420ms var(--motion-ease), background-color 340ms ease, border-color 340ms ease, color 340ms ease; }
+.motion-chart-line, .motion-chart-area { transition: d 420ms var(--motion-ease); }
+.motion-chart-point { transition: cy 420ms var(--motion-ease); }
+.pitch-timer-display { border: 1px solid transparent; transition: color 280ms ease, background-color 280ms ease, border-color 280ms ease, box-shadow 280ms ease; }
+.pitch-timer-display[data-state="running"] { background-color: #EDF4EC; border-color: #B7D9C5; box-shadow: 0 0 0 4px #EDF4EC80; }
+.pitch-timer-display[data-state="paused"] { background-color: #FFF8E7; border-color: #E6D59D; }
+.pitch-timer-display[data-state="finished"] { color: white; background-color: #063F32; border-color: #063F32; }
+.pitch-status-dot { transition: background-color 260ms ease, opacity 260ms ease; }
+.pitch-status[data-state="running"] .pitch-status-dot { background-color: #08754D; }
+.pitch-status[data-state="paused"] .pitch-status-dot { background-color: #82651F; }
+.pitch-status[data-state="finished"] .pitch-status-dot { background-color: #063F32; }
+.pitch-control { transition: opacity 180ms ease, background-color 260ms ease, border-color 260ms ease, transform 260ms var(--motion-ease); }
+
+details[data-motion-disclosure="closing"][open] > summary .lucide-chevron-down,
+details.sample-brief[data-motion-disclosure="closing"] > summary .disclosure-mark { transform: rotate(0deg); }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion-state="pending"] { opacity: 0; transform: translateY(20px); }
+  @keyframes disclosure-content-enter {
+    from { opacity: .45; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  details[data-motion-disclosure="opening"] > :not(summary) { animation: disclosure-content-enter 240ms var(--motion-ease) both; }
+
+  dialog {
+    opacity: 0;
+    transform: translateY(14px) scale(.985);
+    transition: opacity 240ms ease, transform 360ms var(--motion-ease), display 360ms allow-discrete, overlay 360ms allow-discrete;
+  }
+  dialog[open] { opacity: 1; transform: translateY(0) scale(1); }
+  dialog:not([open]) { pointer-events: none; }
+  dialog::backdrop {
+    background-color: rgb(9 43 34 / 0);
+    transition: background-color 280ms ease, display 360ms allow-discrete, overlay 360ms allow-discrete;
+  }
+  dialog[open]::backdrop { background-color: rgb(9 43 34 / .66); }
+  @starting-style {
+    dialog[open] { opacity: 0; transform: translateY(14px) scale(.985); }
+    dialog[open]::backdrop { background-color: rgb(9 43 34 / 0); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-state] { opacity: 1 !important; transform: none !important; }
+  .motion-chart-line, .motion-chart-area, .motion-chart-point,
+  .journey-step-marker, .motion-progress, .pitch-timer-display,
+  .pitch-status-dot, .pitch-control, dialog, dialog::backdrop { transition: none !important; animation: none !important; }
+  .button:hover:not(:disabled), .button:active:not(:disabled),
+  .button:hover svg, .text-link:hover svg, .hero-secondary:hover svg { transform: none !important; }
+}
+
+@media print {
+  [data-motion-state] { opacity: 1 !important; transform: none !important; }
+  details[data-motion-disclosure] { height: auto !important; overflow: visible !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

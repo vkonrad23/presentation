@@ -10,6 +10,7 @@ import {
   type DemoScenarioKey, type FearCategory, type GeneratedJourney,
   type JourneyPace, type SessionCheckIn,
 } from '../data/demoJourneys';
+import { useContentTransition } from '../hooks/useMotion';
 
 interface RangeFieldProps {
   id: string;
@@ -47,6 +48,12 @@ export function ProductDemo() {
   const [paused, setPaused] = useState(false);
   const recommendation = getHeroRecommendation(applied.scenario, applied.anxiety);
   const changed = applied.anxiety !== anxiety;
+  const recommendationRef = useRef<HTMLDivElement>(null);
+
+  useContentTransition(recommendationRef, `${applied.scenario}:${applied.anxiety}:${paused}`, {
+    duration: 360,
+    distance: 8,
+  });
 
   function adapt() {
     setApplied({ scenario, anxiety });
@@ -78,7 +85,7 @@ export function ProductDemo() {
 
         <RangeField id="hero-anxiety" label="How does it feel right now?" value={anxiety} onChange={setAnxiety} />
 
-        <div className="mt-4 min-h-[224px] rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-4" data-testid="hero-recommendation">
+        <div ref={recommendationRef} className="motion-state-panel mt-4 min-h-[224px] rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-4" data-testid="hero-recommendation">
           <div className="mb-3 flex items-center justify-between gap-2">
             <span className="flex items-center gap-2 text-xs font-semibold text-[#08754D]"><Compass size={16} /> Your suggested next step</span>
             <span className="text-xs text-[#52645D]">{paused ? 'Paused' : 'Private practice'}</span>
@@ -115,13 +122,20 @@ export function ProductDemo() {
 type JourneyStage = 'empty' | 'ready' | 'practice' | 'reflection' | 'complete' | 'paused' | 'stopped';
 type ActiveStage = 'ready' | 'practice' | 'reflection';
 
-function SessionSummary({ records }: { records: SessionCheckIn[] }) {
+function SessionSummary({ records, disabled = false }: { records: SessionCheckIn[]; disabled?: boolean }) {
   const latest = records.at(-1);
   const first = records[0];
   const change = latest && first ? latest.after - first.before : 0;
+  const summaryRef = useRef<HTMLDivElement>(null);
+
+  useContentTransition(summaryRef, `${records.length}:${latest?.id ?? 0}`, {
+    duration: 380,
+    distance: 6,
+    disabled,
+  });
 
   return (
-    <div className="rounded-2xl border border-[#DCE5DB] bg-white p-5" data-testid="session-summary">
+    <div ref={summaryRef} className="motion-state-panel rounded-2xl border border-[#DCE5DB] bg-white p-5" data-testid="session-summary">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h3 className="flex items-center gap-2 text-base font-semibold text-[#063F32]"><TrendingUp size={18} /> Your demo session</h3>
         <span className="text-xs text-[#52645D]">Memory only</span>
@@ -170,11 +184,25 @@ export function JourneyDemo() {
   const [experience, setExperience] = useState<SessionCheckIn['experience']>('Manageable');
   const [reflection, setReflection] = useState('');
   const [records, setRecords] = useState<SessionCheckIn[]>([]);
+  const [suggestionRevision, setSuggestionRevision] = useState(0);
   const timer = useRef<number | undefined>(undefined);
   const resultRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const suggestionRef = useRef<HTMLDivElement>(null);
   const latest = records.at(-1);
   const nextSuggestion = result && latest ? nextStepFromFeedback(result, latest) : null;
   const active = stage === 'ready' || stage === 'practice' || stage === 'reflection';
+
+  useContentTransition(contentRef, `${stage}:${result?.goal ?? ''}`, {
+    duration: 380,
+    distance: 10,
+    disabled: crisis || Boolean(error),
+  });
+  useContentTransition(suggestionRef, suggestionRevision, {
+    duration: 320,
+    distance: 6,
+    disabled: crisis,
+  });
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
@@ -222,6 +250,7 @@ export function JourneyDemo() {
     setResult(updated); setSuggestion(updated.steps[practiceDifficulty >= 5 ? 0 : 1]);
     setSuggestionReason(`Adapted for your difficulty of ${practiceDifficulty}/10. ${updated.guidance}`);
     setAfter(practiceDifficulty);
+    setSuggestionRevision((revision) => revision + 1);
   }
 
   function pause() {
@@ -320,7 +349,7 @@ export function JourneyDemo() {
               <button className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 text-sm font-semibold text-[#52645D] hover:text-[#063F32]" type="button" onClick={reset}><RotateCcw size={15} /> Start again / clear session</button>
               <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-[#52645D]"><LockKeyhole size={14} className="mt-0.5" />Inputs remain in this page’s memory. Refreshing clears them. Nothing is sent or stored in your browser.</p>
             </form>
-            <SessionSummary records={records} />
+            <SessionSummary records={records} disabled={crisis} />
           </div>
 
           <div
@@ -332,6 +361,7 @@ export function JourneyDemo() {
               <p className="text-xs leading-relaxed text-[#52645D]">{loading ? 'Selecting from predefined sample activities…' : stage === 'complete' ? 'Reflection completed. Your demo session has been updated.' : stage === 'paused' ? 'Practice paused. Resume only when you choose.' : stage === 'stopped' ? 'Practice stopped. No further action is required.' : 'Educational prototype. Not a substitute for professional care.'}</p>
             </div>
 
+            <div ref={contentRef} className="motion-state-panel">
             {crisis ? <SafetyBoundary /> : result ? (
               <>
                 <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[#08754D]"><Sparkles size={14} /> Local personalization demo</span>
@@ -365,8 +395,10 @@ export function JourneyDemo() {
                     {stage !== 'reflection' ? (
                       <div className="mt-6 rounded-2xl border border-[#DCE5DB] bg-white p-5">
                         <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[.08em] text-[#08754D]"><Compass size={15} /> {stage === 'practice' ? 'Your voluntary practice' : 'Your proposed first step'}</p>
-                        <p className="min-h-[72px] text-lg font-medium leading-relaxed text-[#063F32]" data-testid="practice-suggestion">{suggestion}</p>
-                        <p className="mt-4 border-t border-[#DCE5DB] pt-4 text-sm leading-relaxed text-[#52645D]"><strong className="text-[#063F32]">Why this step? </strong>{suggestionReason}</p>
+                        <div ref={suggestionRef} className="motion-state-panel">
+                          <p className="min-h-[72px] text-lg font-medium leading-relaxed text-[#063F32]" data-testid="practice-suggestion">{suggestion}</p>
+                          <p className="mt-4 border-t border-[#DCE5DB] pt-4 text-sm leading-relaxed text-[#52645D]"><strong className="text-[#063F32]">Why this step? </strong>{suggestionReason}</p>
+                        </div>
                         {stage === 'ready' ? (
                           <div className="mt-5">
                             <RangeField id="practice-difficulty" label="Make it fit your comfort" value={practiceDifficulty} onChange={setPracticeDifficulty} />
@@ -399,6 +431,7 @@ export function JourneyDemo() {
                 <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-[#52645D]"><HeartHandshake size={16} className="mt-0.5 shrink-0 text-[#08754D]" />{result.category.limitation} This is not an assessment or treatment plan.</p>
               </>
             ) : <JourneyEmptyState />}
+            </div>
           </div>
         </div>
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[#D0DDCE] bg-white/70 p-5">
@@ -416,7 +449,7 @@ function JourneyProgress({ stage }: { stage: JourneyStage }) {
     <ol className="grid grid-cols-5 gap-1" aria-label="Demo journey progress">
       {['Goal', 'Step', 'Practice', 'Reflect', 'Learn'].map((label, index) => (
         <li key={label} className="text-center" aria-current={current === index ? 'step' : undefined}>
-          <span className={`mb-2 block h-1.5 rounded-full ${index <= current ? 'bg-[#08754D]' : 'bg-[#DCE5DB]'}`} />
+          <span className={`journey-step-marker mb-2 block h-1.5 rounded-full ${index <= current ? 'bg-[#08754D]' : 'bg-[#DCE5DB]'}`} />
           <span className={`text-xs ${index === current ? 'font-semibold text-[#063F32]' : 'text-[#52645D]'}`}>{label}</span>
         </li>
       ))}
@@ -454,6 +487,9 @@ export function SampleJourney() {
   const [completed, setCompleted] = useState<number[]>([0]);
   const current = speakingJourney[active];
   const complete = completed.includes(active);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useContentTransition(panelRef, active, { duration: 360, distance: 8 });
 
   function toggleCompletion() {
     setCompleted((items) => items.includes(active) ? items.filter((item) => item !== active) : [...items, active]);
@@ -493,7 +529,7 @@ export function SampleJourney() {
             </div>
             <p className="mt-6 flex items-start gap-2 text-xs leading-relaxed text-[#52645D]"><ShieldCheck size={16} className="mt-0.5" />Completion and confidence values here are illustrative. Clicks only change this example.</p>
           </div>
-          <div id="sample-step-panel" role="tabpanel" aria-labelledby={`sample-step-${active}`} tabIndex={0} className="min-h-[640px] bg-white p-5 sm:p-8">
+          <div ref={panelRef} id="sample-step-panel" role="tabpanel" aria-labelledby={`sample-step-${active}`} tabIndex={0} className="motion-state-panel min-h-[640px] bg-white p-5 sm:p-8">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <span className="text-xs font-semibold uppercase tracking-[.1em] text-[#08754D]">Step {active + 1} · Illustrative activity</span>
               <span className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${complete ? 'bg-[#EDF4EC] text-[#063F32]' : 'bg-[#F7F8F2] text-[#52645D]'}`}>
@@ -508,7 +544,7 @@ export function SampleJourney() {
             </div>
             <div className="mt-6 grid gap-4 border-t border-[#DCE5DB] pt-5 sm:grid-cols-2">
               {[{ label: 'Example difficulty', value: current.difficulty, color: '#A17B14' }, { label: 'Example confidence', value: current.confidence, color: '#08754D' }].map((metric) => (
-                <div key={metric.label}><p className="mb-2 text-xs text-[#52645D]">{metric.label}</p><div className="flex items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#EDF4EC]"><span className="block h-full rounded-full" style={{ width: `${metric.value * 10}%`, backgroundColor: metric.color }} /></span><span className="text-sm font-semibold text-[#10251F]">{metric.value}/10</span></div></div>
+                <div key={metric.label}><p className="mb-2 text-xs text-[#52645D]">{metric.label}</p><div className="flex items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#EDF4EC]"><span className="motion-progress block h-full rounded-full" style={{ width: `${metric.value * 10}%`, backgroundColor: metric.color }} /></span><span className="text-sm font-semibold text-[#10251F]">{metric.value}/10</span></div></div>
               ))}
             </div>
             <button type="button" onClick={toggleCompletion} className="button button-secondary mt-6 w-full justify-center" aria-pressed={complete}>

@@ -1,8 +1,8 @@
 # FearlessU accelerator presentation
 
-A responsive, interactive presentation for **FearlessU**, an early-stage wellness technology concept exploring AI-assisted, evidence-informed fear journeys. Built with React, TypeScript, Vite, Tailwind CSS, and Lucide React icons. The editorial layout uses forest green, warm ivory, sage, and restrained gold, with system fonts and original SVG assets. This is an accelerator application prototype, with deterministic demonstrations and clearly labeled illustrative data.
+A responsive, interactive presentation for **FearlessU**, an early-stage mental health AI startup exploring personalized CBT-informed support and responsible research into new intervention ideas. Built with React, TypeScript, Vite, Tailwind CSS, and Lucide React icons. The editorial layout uses forest green, warm ivory, sage, and restrained gold, with system fonts and original SVG assets. This is an accelerator application prototype, with deterministic demonstrations and clearly labeled illustrative data.
 
-The React project at the repository root is the current deliverable. `FearlessU_Presentation_Website/` preserves the original standalone HTML website for reference.
+The React project at the repository root is the current deliverable. `FearlessU_Presentation_Website/` preserves the original standalone HTML website and its earlier, narrower positioning for reference. Use the root React project for the current research vision.
 
 ## Run locally
 
@@ -70,16 +70,26 @@ No backend, live AI model, API key, database, authentication service, or persist
 
 ## Replace and verify before submission
 
-The supplied founder name is **Vladyslav Konrad**, with the role **Founder and Product Lead**. These are user-provided presentation details; no additional biography, qualifications, employment history, or credentials have been verified.
+The supplied founder name is **Vladyslav Konrad**, with the role **Founder and Product Lead**. The founder also supplied that he is a Software Engineering student at American University Kyiv, an ASU partner institution. These are founder-provided details, not independently verified credentials. AUK’s academic relationship with ASU does not establish a FearlessU partnership, endorsement, or ASU enrollment.
 
 Before submitting or publishing:
 
-- Replace the founder biography, headquarters location, company details, contact email, website, LinkedIn information, and video placeholder with accurate information and working destinations.
+- Expand the founder biography with accurate experience and achievements; replace headquarters, company, contact, website, LinkedIn, and video placeholders with verified information and working destinations.
 - Replace funding, revenue, financial, customer, and application placeholders with verifiable facts. Proposed business models, pricing, milestones, and collaborator roles remain plans.
 - Confirm the accelerator's official name, 2027 availability, eligibility, participation requirements, fees, dates, and submission deadline directly with the program. The presentation does not establish eligibility or acceptance.
 - Review every claim and exported summary, and replace illustrative information only when supporting evidence exists.
 
 The website does not establish a Mayo Clinic or ASU partnership, endorsement, or acceptance. It does not claim clinical validation, regulatory clearance, patents, paying customers, investment, or security certification. Simulated metrics and charts are demonstration data and **are not clinical evidence**.
+
+## Personalization, original research, and Ukraine
+
+FearlessU’s long-term vision includes both personalizing established, evidence-informed CBT exercises and generating original CBT-inspired candidate exercises, proposing novel therapeutic strategies, and formulating hypotheses for psychological interventions. Individual needs, emotional responses, and real-world circumstances would inform research questions. These are proposed capabilities; no generative AI or candidate-generation system is connected to this demo.
+
+Novel candidates would remain research ideas until expert review, safety evaluation, appropriate clinical validation, and any necessary approvals support therapeutic use. Proposed interests include anxiety, depression, complex fears, and phobias; target populations and intended use require qualified guidance. No effectiveness or clinical validation is claimed.
+
+The proposed Ukraine-focused social-impact direction is trauma-informed psychological stabilization and PTSD support resources for military personnel and civilians affected by war and humanitarian crises. This is a research ambition, not an available treatment or support service. It requires trauma-qualified expertise, appropriate ethics and suitability review, and independent oversight. The educational demo remains outside trauma and PTSD intervention use.
+
+Mayo Clinic and ASU researchers are possible future collaborators the founder hopes to engage. No collaboration, institutional endorsement, or accelerator acceptance is established.
 
 ## Medical, safety, and privacy limits
 
@@ -96,7 +106,7 @@ The three proposed evidence phases cover usability and safety review, feasibilit
 1. Define the intended use, supported population, consent process, data minimization, retention/deletion rules, and clinical safety boundaries before collecting information.
 2. Add a separately secured server/API with appropriate authentication, authorization, access controls, encrypted transport and storage, rate limits, and privacy-conscious audit logging. Define a real contact submission workflow and its error states before enabling collection.
 3. Keep provider credentials on that server. **Never place secrets in frontend code or `VITE_` variables**: Vite exposes those variables in the browser bundle. A frontend environment variable may hold a public API base URL, never a secret key.
-4. Replace local recommendation rules only through a reviewed, curated content framework with server-side validation, suitability checks, tested escalation boundaries, and qualified human oversight. Do not expose an unrestricted treatment-generation endpoint.
+4. Replace local recommendation rules only through a reviewed, curated content framework with server-side validation, suitability checks, tested escalation boundaries, and qualified human oversight. Keep novel candidate generation in a separately governed research workflow. Candidates must pass expert review, safety evaluation, and appropriate clinical validation before entering any therapeutic recommendation path; do not expose an unrestricted treatment-generation endpoint.
 5. Validate risk handling, model behavior, accessibility, security, privacy, and adverse-event processes with qualified advisors before a real-user pilot. Determine the applicable regulatory and clinical pathway rather than assuming this prototype establishes one.
 
 ## Distribution

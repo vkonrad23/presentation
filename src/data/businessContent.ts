@@ -1,7 +1,7 @@
 export const businessThesis = {
   title: 'A focused entry into a broad human need.',
-  description: 'A practical commercial question: who benefits from structured practice, who pays for access, and what evidence would support continued use?',
-  market: 'Fear-related goals appear across everyday life, study, work, and professional care. The market opportunity depends on validating one suitable population and a repeatable purchasing pathway—not assuming that everyone is a customer.',
+  description: 'Two connected directions: personalized CBT-informed support and a separately governed research program for original candidate exercises and intervention hypotheses.',
+  market: 'The initial product opportunity is structured support for manageable, everyday fear-related goals. A longer-term research ambition includes anxiety, depression, and trauma-related needs, with suitability and any therapeutic claims requiring expert guidance and appropriate validation. Buyers, pricing, and purchasing pathways remain unvalidated.',
 };
 
 export const buyerHypotheses = [
@@ -31,9 +31,9 @@ export const buyerHypotheses = [
   },
   {
     name: 'Research and innovation partnerships',
-    audience: 'Institutions evaluating usability, safety, and appropriately defined outcomes.',
-    model: 'Scoped pilot or research partnerships, with independent governance.',
-    question: 'Can a feasible protocol generate interpretable evidence and protect participants?',
+    audience: 'Qualified institutions exploring original candidate exercises, novel therapeutic strategies, and intervention hypotheses alongside evaluation of personalized support.',
+    model: 'Scoped pilot or research partnerships, with independent governance, ethics review where required, and appropriate expert oversight.',
+    question: 'Which research questions and safeguards would support expert review, safety assessment, and appropriate clinical validation before therapeutic use?',
   },
 ];
 
@@ -41,13 +41,13 @@ export const revenueHypotheses = [
   { name: 'Individual subscription', detail: 'Advanced journeys and personal progress tools.' },
   { name: 'B2B per-member pricing', detail: 'Access for a defined employer population.' },
   { name: 'Institutional licensing', detail: 'University or professional support workflows.' },
-  { name: 'Pilot & research partnerships', detail: 'A bounded scope, protocol, and evaluation plan.' },
+  { name: 'Pilot & research partnerships', detail: 'A bounded product or original-research scope, independent governance, and an appropriate evaluation protocol.' },
 ];
 
 export const goToMarketSteps = [
   { title: 'Choose a beachhead', description: 'Interview intended users and buyers; test suitability, unmet needs, and willingness to engage.' },
   { title: 'Prove a narrow workflow', description: 'Recruit design partners for prototype feedback and a carefully defined, reviewed pilot.' },
-  { title: 'Measure before expansion', description: 'Evaluate usability, retention, safety, and purchasing feasibility before extending access.' },
+  { title: 'Measure before expansion', description: 'Evaluate usability, safety, retention, and purchasing feasibility. Keep original research candidates separate from therapeutic use until expert review and appropriate validation.' },
 ];
 
 export const comparisonDimensions = [
@@ -65,49 +65,53 @@ export const comparisonCategories = [
 export const acceleratorGoals = [
   {
     title: 'Validate the clinical and behavioral framework',
-    description: 'Refine intended use, suitable populations, content boundaries, and a reviewable evidence strategy.',
-    outcome: 'A defensible product framework',
+    description: 'Review CBT-informed personalization and original candidate exercises or intervention hypotheses. Define intended use, safety boundaries, expert oversight, and the clinical validation required before any therapeutic use of research candidates.',
+    outcome: 'A defensible product and research framework',
   },
   {
     title: 'Design and prepare a responsible pilot',
-    description: 'Define a feasible protocol, meaningful measures, participant criteria, oversight, and safety monitoring.',
-    outcome: 'A pilot ready for appropriate review',
+    description: 'Define protocols, meaningful measures, participant criteria, ethics review, and safety monitoring. Assess the suitability of any future trauma-informed stabilization or PTSD-related resources for war-affected military personnel and civilians.',
+    outcome: 'A pilot proposal ready for appropriate review',
   },
   {
     title: 'Build a scalable commercialization and integration strategy',
-    description: 'Test buyer needs, institutional workflows, regulatory considerations, and a focused route to adoption.',
+    description: 'Test buyer needs, institutional workflows, regulatory considerations, and sustainable research relationships. Let evidence and suitability determine the product scope and route to adoption.',
     outcome: 'An evidence-led path to market',
   },
 ];
 export const collaborationAreas = [
-  'Clinical protocol design', 'Safety and governance review', 'Research methodology',
-  'Outcome validation', 'Health system workflow integration', 'Regulatory strategy',
-  'Pilot design', 'Commercialization readiness',
+  'Clinical and behavioral protocol design', 'Original intervention hypothesis review',
+  'Trauma-informed safety and governance', 'Research methodology and outcome validation',
+  'Health system workflow integration', 'Regulatory and research ethics strategy',
+  'Institutional pilot design', 'Commercialization readiness',
 ];
 
 export const developmentMilestones = [
-  { period: '0–3 months', title: 'Refine & review', items: ['Prototype refinement and expert feedback', 'Intended use and safety framework'] },
-  { period: '3–6 months', title: 'Test usability', items: ['Comprehension, accessibility, and engagement', 'Content and AI evaluation requirements'] },
-  { period: '6–12 months', title: 'Prepare a pilot', items: ['Protocol, oversight, and outcome measures', 'Institutional pilot, subject to approvals'] },
-  { period: '12–18 months', title: 'Learn & prepare', items: ['Evidence collection and product iteration', 'Commercial launch preparation if justified'] },
+  { period: '0–3 months', title: 'Refine & review', items: ['Prototype refinement and expert feedback', 'Intended use, advisor recruitment, and research boundaries'] },
+  { period: '3–6 months', title: 'Test usability', items: ['Comprehension, accessibility, and engagement', 'Content, AI, and original research-candidate evaluation requirements'] },
+  { period: '6–12 months', title: 'Prepare a pilot', items: ['Separate protocols for product evaluation and any therapeutic research', 'Institutional pilot, subject to oversight and approvals'] },
+  { period: '12–18 months', title: 'Learn & prepare', items: ['Approved evidence collection and product iteration', 'Commercial launch preparation within a justified, reviewed scope'] },
 ];
 
 export const founder = {
   name: 'Vladyslav Konrad',
   role: 'Founder and Product Lead',
-  bio: 'Founder biography to be supplied. Add relevant experience and documented achievements before submission.',
-  expertise: 'Placeholder: add verified technical, product, or user-research experience relevant to this project.',
-  motivation: 'Placeholder: describe the founder’s personal motivation and user insight without implying clinical expertise.',
+  bio: 'Vladyslav Konrad is a Software Engineering student at American University Kyiv, an ASU partner institution, and the founder of FearlessU.',
+  expertise: 'His educational background is in software engineering. Clinical design, therapeutic research, safety review, and evaluation require qualified collaborators; no clinical qualification is claimed.',
+  motivation: 'To make personalized CBT-informed support more accessible and investigate original research candidates responsibly, with a long-term interest in trauma-informed resources for military personnel and civilians affected by the war in Ukraine.',
+  institutionalContext: 'American University Kyiv’s academic relationship with Arizona State University is educational context. It does not establish a FearlessU partnership with ASU or Mayo Clinic.',
 };
 export const teamPriorities = [
-  { name: 'Clinical guidance', role: 'Clinical Advisor', detail: 'Intended use, suitability, content review, and care boundaries.' },
+  { name: 'Clinical guidance', role: 'Clinical Advisor', detail: 'Intended use, suitability, trauma-informed content review, and care boundaries.' },
   { name: 'Technical leadership', role: 'AI/ML Lead', detail: 'Constrained personalization, evaluation, and reliable implementation.' },
-  { name: 'Research & evaluation', role: 'Research and Evaluation Advisor', detail: 'Protocol design, meaningful measures, and transparent reporting.' },
+  { name: 'Research & evaluation', role: 'Research and Evaluation Advisor', detail: 'Original intervention hypothesis review, ethical protocols, clinical validation planning, and transparent reporting.' },
   { name: 'Privacy & security', role: 'Privacy and Security Advisor', detail: 'Data minimization, production architecture, and independent review.' },
 ];
 
 export const applicationSnapshot = [
-  { title: 'Product', content: 'An early-stage AI-assisted platform for structured, CBT-informed fear journeys, gradual practice, reflection, and understandable progress.' },
+  { title: 'Product', content: 'An early-stage AI-assisted platform concept for personalized CBT-informed exercises, structured fear journeys, reflection, and progress tracking, alongside a separately governed original-research direction.' },
+  { title: 'Original research ambition', content: 'Investigate candidate exercises, novel therapeutic strategies, and intervention hypotheses relevant to fear, anxiety, and depression. Expert review, safety assessment, and appropriate clinical validation must precede any therapeutic use. These are research ambitions, not capabilities of the current demo.' },
+  { title: 'Ukraine-focused research ambition', content: 'Explore trauma-informed stabilization and PTSD-related resources for military personnel and civilians affected by the war in Ukraine, with qualified experts and appropriate research oversight. No trauma treatment or PTSD intervention is provided by the current prototype.' },
   { title: 'Problem', content: 'Recognizing a fear does not always make the next step feel manageable. FearlessU explores a structured bridge from intention to practice.' },
   { title: 'Customer stage', content: 'Pre-customer, early discovery. Intended users, buyers, and willingness to pay require validation.' },
   { title: 'Acquisition hypothesis', content: 'Educational content and design-partner discovery, followed by appropriately reviewed university, employer, or professional pilots.' },

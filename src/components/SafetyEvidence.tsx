@@ -3,7 +3,8 @@ import {
   MessageCircle, MousePointer2, ShieldCheck, SlidersHorizontal, Target,
 } from 'lucide-react';
 import {
-  aiSystemStages, evidencePhases, proposedMeasures, safetyControls, safetyStatusLegend,
+  aiSystemStages, evidencePhases, proposedMeasures, researchGateStages,
+  safetyControls, safetyStatusLegend, traumaResearchBoundary,
 } from '../data/safetyContent';
 
 const stageIcons = {
@@ -66,6 +67,20 @@ export function AISystem() {
             <p>The phrase check is incomplete and can miss risk. Future clinical screening, expert-reviewed content selection, model evaluation, and production safeguards require implementation and validation.</p>
           </div>
         </div>
+        <aside id="research" tabIndex={-1} className="mt-6 scroll-mt-28 rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-5 sm:p-7" aria-labelledby="candidate-research-title">
+          <p className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[.1em] text-[#68521C]"><FlaskConical size={16} aria-hidden="true" />Long-term research vision · Not implemented</p>
+          <h3 id="candidate-research-title" className="text-xl font-semibold leading-7 text-[#063F32]">Personalization, innovation, and CBT research.</h3>
+          <p className="mt-3 max-w-[100ch] text-base leading-7 text-[#52645D]">The research vision goes beyond adapting existing techniques: generate original CBT-inspired candidate exercises, propose novel therapeutic strategies, and formulate new psychological intervention hypotheses informed by individual needs, emotional responses, and context.</p>
+          <p className="mt-3 max-w-[100ch] text-base leading-7 text-[#52645D]">Long-term research interests include anxiety, depression, complex fears, phobias, and other psychological challenges. Qualified clinical collaboration would define intended use, suitable populations, and the evidence needed for any claims.</p>
+          <p className="mt-3 max-w-[100ch] text-base leading-7 text-[#52645D]"><strong className="font-semibold text-[#10251F]">Before any therapeutic recommendation:</strong> expert review, safety evaluation, and appropriate clinical validation would be required. A novel proposal is not automatically approved, validated, or added to a curated library. No live AI or candidate-generation system is connected here.</p>
+          <ol className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {researchGateStages.map((stage, index) => <li key={stage.title} className="border-l-2 border-[#E8B93F] pl-4"><p className="mb-2 text-xs font-semibold text-[#68521C]">Research gate 0{index + 1}</p><h4 className="text-base font-semibold text-[#10251F]">{stage.title}</h4><p className="mt-2 text-base leading-7 text-[#52645D]">{stage.detail}</p></li>)}
+          </ol>
+          <div className="mt-6 border-t border-[#DCE5DB] pt-5">
+            <h4 className="text-base font-semibold text-[#063F32]">Social impact, with Ukraine in focus.</h4>
+            <p className="mt-3 max-w-[100ch] text-base leading-7 text-[#52645D]">{traumaResearchBoundary}</p>
+          </div>
+        </aside>
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-[70ch] text-base leading-7 text-[#52645D]">No autonomous diagnosis. No replacement for professional care. No promise of a clinical outcome.</p>
           <a href="#journey" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-1 text-base font-semibold text-[#063F32]">Explore the local demo <ArrowRight size={17} aria-hidden="true" /></a>
@@ -122,6 +137,7 @@ export function EvidenceRoadmap() {
         <ol className="relative border-y border-[#DCE5DB] before:absolute before:bottom-8 before:left-5 before:top-8 before:w-px before:bg-[#DCE5DB]">
           {evidencePhases.map((phase) => <li key={phase.number} className="relative grid grid-cols-[40px_1fr] gap-x-4 border-b border-[#DCE5DB] py-7 last:border-b-0 sm:gap-x-7"><span className="relative z-[1] flex h-10 w-10 items-center justify-center rounded-full border border-[#B8CDBE] bg-[#F7F8F2] text-xs font-semibold text-[#063F32]">{phase.number}</span><div className="grid gap-5 lg:grid-cols-[.9fr_1.2fr_1fr] lg:gap-8"><div><h3 className="text-xl font-semibold leading-7 tracking-[-.02em] text-[#10251F]">{phase.title}</h3><p className="mt-2 text-base leading-7 text-[#52645D]">{phase.question}</p></div><ul className="space-y-2">{phase.activities.map((activity) => <li key={activity} className="flex items-start gap-2.5 text-base leading-7 text-[#52645D]"><Check size={16} className="mt-1.5 shrink-0 text-[#08754D]" aria-hidden="true" />{activity}</li>)}</ul><div className="border-l-2 border-[#E8B93F] pl-5"><p className="text-xs font-semibold uppercase tracking-[.1em] text-[#52645D]">Proposed decision point</p><p className="mt-3 text-base leading-7 text-[#063F32]">{phase.output}</p></div></div></li>)}
         </ol>
+
 
         <div className="mt-7 grid gap-4 sm:grid-cols-[210px_1fr]">
           <h3 className="text-base font-semibold leading-7 text-[#10251F]">Possible measures<br /><span className="text-xs font-normal text-[#52645D]">To be selected with clinical advisors</span></h3>

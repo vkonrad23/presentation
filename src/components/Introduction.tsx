@@ -1,27 +1,24 @@
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, ChartNoAxesCombined, Heart, LockKeyhole, Map, Route, ShieldCheck, SlidersHorizontal, Users } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, ChartNoAxesCombined, FlaskConical, Heart, LockKeyhole, Map, Route, ShieldCheck, SlidersHorizontal, Users } from 'lucide-react';
 import { capabilities, problemCards, processSteps, trustPrinciples } from '../data/content';
 import { ProductDemo } from './JourneyExperience';
 
 const trustIcons = { book: BookOpen, heart: Heart, shield: ShieldCheck, lock: LockKeyhole };
-const capabilityIcons = { map: Map, route: Route, sliders: SlidersHorizontal, chart: ChartNoAxesCombined, people: Users };
+const capabilityIcons = { map: Map, route: Route, sliders: SlidersHorizontal, chart: ChartNoAxesCombined, people: Users, research: FlaskConical };
 
 export function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="container hero-grid">
         <div className="hero-copy">
-          <p className="hero-badge"><span className="status-dot" /> Human-centered AI. Carefully bounded.</p>
+          <p className="hero-badge"><span className="status-dot" /> Generative AI for mental health</p>
           <h1 id="hero-title">Face fear,<br />one <em>manageable</em><br />step at a time.</h1>
-          <p className="hero-description">FearlessU turns fear-related goals into personalized, evidence-informed journeys with structured exercises, thoughtful reflection, and progress people can understand.</p>
+          <p className="hero-description">FearlessU is an early-stage mental health AI startup exploring personalized CBT-informed support and responsibly evaluated research into new intervention ideas.</p>
           <div className="hero-actions">
             <a className="button" href="#journey">Explore the fear journey <ArrowUpRight size={19} aria-hidden="true" /></a>
             <a className="hero-secondary" href="#accelerator">View accelerator case <ArrowRight size={18} aria-hidden="true" /></a>
           </div>
-          <div className="hero-stage"><span className="stage-line" aria-hidden="true" /><p>Interactive prototype <span>Clinical validation planned</span></p></div>
-          <div className="hero-note">
-            <span className="hero-note-number">01 /</span>
-            <p>Start with what feels possible.<br /><strong>Keep the next choice yours.</strong></p>
-          </div>
+          <div className="hero-stage"><span className="stage-line" aria-hidden="true" /><p>Interactive prototype <span>Research and clinical validation planned</span></p></div>
+          <a className="text-link mt-5" href="#research">Explore the research vision <ArrowRight size={17} aria-hidden="true" /></a>
         </div>
         <div className="hero-product">
           <svg className="hero-path" viewBox="0 0 670 780" fill="none" aria-hidden="true">
@@ -74,7 +71,7 @@ export function SolutionSection() {
       <div className="container">
         <div className="section-intro">
           <div><p className="eyebrow">The product thesis</p><h2 className="section-heading" id="solution-title">Personal to the goal.<br /><em>Structured by design.</em></h2></div>
-          <p className="section-description">FearlessU proposes AI-assisted personalization of CBT-informed exercises, structured gradual-practice journeys, reflection, and progress tracking. The prototype demonstrates a bounded part of that experience.</p>
+          <p className="section-description">The vision combines generative AI personalization of CBT-informed support with research into original intervention ideas. This prototype demonstrates a bounded practice-and-reflection loop using local rules.</p>
         </div>
         <div className="capability-list">
           {capabilities.map((item, index) => {

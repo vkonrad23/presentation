@@ -12,7 +12,17 @@ export const faqs = [
   {
     question: 'How does the AI personalize activities?',
     answer:
-      'A future product would adapt wording and step size within an expert-reviewed framework. The current demo uses predefined templates and local rules, with no live AI model or external API connected.',
+      'The proposed platform would use generative AI to personalize wording, pacing, and exercise candidates within an expert-reviewed framework. A research track would investigate original strategies as hypotheses, with safety review and appropriate validation before therapeutic use. The current demo uses local rules; no live AI is connected.',
+  },
+  {
+    question: 'Could FearlessU develop original exercises or strategies?',
+    answer:
+      'That is a proposed research ambition. Generative AI could suggest candidate exercises, novel strategies, and intervention hypotheses for qualified experts to examine. Originality is not evidence of safety or effectiveness. Candidates would need expert safety review, suitable research oversight, and validation before therapeutic use.',
+  },
+  {
+    question: 'Does the demo provide trauma or PTSD support in Ukraine?',
+    answer:
+      'No. Trauma stabilization and PTSD support for military personnel and civilians in Ukraine are planned research directions, not available therapy. They would require trauma-qualified clinical partners, safety protocols, and appropriate validation. This demo excludes trauma processing and provides no PTSD treatment, crisis counseling, or emergency care.',
   },
   {
     question: 'What happens if someone needs urgent support?',
@@ -37,14 +47,14 @@ export const faqs = [
   {
     question: 'Is FearlessU already working with Mayo Clinic or ASU?',
     answer:
-      'No collaboration, acceptance, or endorsement is claimed. This is an application preview. Any future collaboration would depend on program guidance, project fit, and availability.',
+      'No FearlessU collaboration, acceptance, or endorsement is claimed. Founder Vladyslav Konrad studies Software Engineering at American University Kyiv, an ASU partner institution. That is educational context, not a FearlessU partnership or an ASU credential claim. Desired research collaboration would require separate agreement.',
   },
 ] as const;
 
 export const contactCopy = {
   headline: 'Build the next step. Responsibly.',
   description:
-    'We’re seeking clinical, research, design, and commercialization guidance to turn a promising concept into a responsibly validated product.',
+    'We’re seeking clinical and research collaboration for proposed generative AI personalization and original intervention research. New exercise candidates would need expert safety review and appropriate validation before therapeutic use.',
   success:
     'Demo form completed. Connect a secure backend before collecting real user information.',
   formNote:
@@ -54,6 +64,9 @@ export const contactCopy = {
     ['Location placeholder', 'Headquarters to be confirmed'],
   ],
 } as const;
+
+export const footerDescription =
+  'A proposed generative AI platform for personalized fear journeys and intervention research. Original exercise candidates require expert review and validation; this prototype uses local rules.';
 
 export const footerDisclaimer =
   'FearlessU is an early-stage wellness technology concept, not a diagnostic tool or substitute for care from a qualified professional.';
@@ -88,6 +101,10 @@ export const termsPrinciples = [
   [
     'Care and suitability',
     'Activities are illustrative and may not be suitable for an individual. They do not diagnose, treat, or replace professional care. This website is not designed to provide crisis counseling or emergency support.',
+  ],
+  [
+    'Research boundaries',
+    'Original exercises and novel strategies are research candidates, not validated therapeutic methods. Trauma stabilization and PTSD support for military personnel and civilians in Ukraine are planned research directions and are outside this demo’s scope.',
   ],
   [
     'Demo inputs',
@@ -145,7 +162,7 @@ export const onePageSummary = `<!doctype html>
     .notice { border-top:1px solid #DCE5DB; padding-top:14px; font-size:12px; }
     button { min-height:44px; border:0; background:#063F32; color:white; border-radius:8px; padding:12px 16px; cursor:pointer; }
     button:focus-visible { outline:3px solid #08754D; outline-offset:4px; }
-    @media print { body { font-size:10.5pt; margin:0; max-width:none; padding:0; } h1 { font-size:27pt; } h2 { font-size:12pt; } button { display:none; } @page { margin:16mm; } }
+    @media print { body { font-size:10pt; line-height:1.3; margin:0; max-width:none; padding:0; } h1 { font-size:27pt; line-height:1.1; margin-top:8px; } h2 { font-size:11pt; margin-top:12px; } p { margin-top:4px; margin-bottom:8px; } .badge { font-size:9pt; padding:4px 8px; } .notice { font-size:9pt; line-height:1.3; padding-top:10px; } button { display:none; } @page { margin:16mm; } }
     @media(max-width:520px) { .grid { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -153,17 +170,17 @@ export const onePageSummary = `<!doctype html>
   <span class="badge">Early concept / interactive prototype · Application preview</span>
   <h1>FearlessU</h1>
   <p><strong>Face fear, one manageable step at a time.</strong></p>
-  <p>An AI-assisted wellness concept for personalized, evidence-informed journeys with structured exercises, gradual practice, reflection, and progress tracking.</p>
+  <p>A proposed generative AI platform for personalized, evidence-informed fear journeys and original intervention research. The current educational prototype uses local rules, not live AI.</p>
   <div class="grid">
     <section><h2>The problem</h2><p>Avoidance can reinforce fear. People may need a structured bridge between recognizing a challenge and taking a manageable next step.</p></section>
-    <section><h2>Proposed approach</h2><p>Understand the goal → Build a manageable step → Learn from the response → Adapt. A future curated framework would constrain personalization and support professional collaboration.</p></section>
+    <section><h2>Personalization & originality</h2><p>Generative AI would personalize journeys and propose candidate exercises, novel strategies, and intervention hypotheses. Expert review, safety evaluation, and appropriate clinical validation must precede therapeutic use. Originality is not clinical evidence.</p></section>
     <section><h2>Working prototype</h2><p>Local template-based journeys, deterministic recommendations, reflection controls, illustrative dashboard filters, and pitch rehearsal tools. No live AI or backend is connected.</p></section>
-    <section><h2>Validation priorities</h2><p>Usability and safety review; expert feedback; a responsible feasibility protocol; then appropriate controlled evaluation before clinical claims.</p></section>
+    <section><h2>Planned Ukraine research</h2><p>Explore trauma-informed stabilization and PTSD resources for military personnel and civilians affected by war and humanitarian crises, particularly in Ukraine. Qualified clinical collaboration is planned. The demo provides no trauma treatment or emergency support.</p></section>
     <section><h2>Business hypotheses</h2><p>Individual subscriptions, organizational licensing, and optional professional tools. Pricing, buyer demand, pilot populations, and purchasing pathways require validation.</p></section>
-    <section><h2>Collaboration goals</h2><p>Refine the behavioral framework, prepare a responsible pilot, and explore commercialization. No Mayo Clinic or ASU acceptance, collaboration, or endorsement is claimed.</p></section>
+    <section><h2>Validation & collaboration</h2><p>Seek expert safety review, develop a responsible study protocol, and evaluate candidates before therapeutic use. Mayo Clinic and ASU collaboration is desired; no FearlessU partnership, acceptance, or endorsement is claimed.</p></section>
   </div>
   <h2>Founder and editable company information</h2>
-  <p>Vladyslav Konrad · Founder and Product Lead.<br>Biography, company/legal details, headquarters, and verified LinkedIn: <strong>to be added</strong>.<br>Email placeholder: founder@fearlessu.example · Website placeholder: fearlessu.example.<br>Funding and fiscal-year revenue: <strong>not provided — replace with accurate information</strong>.</p>
+  <p>Vladyslav Konrad · Founder and Product Lead. Software Engineering student at American University Kyiv, an ASU partner institution. This is educational context, not a FearlessU partnership or ASU credential claim.<br>Company/legal details, headquarters, and verified LinkedIn: <strong>to be added</strong>.<br>Email placeholder: founder@fearlessu.example · Website placeholder: fearlessu.example.<br>Funding and fiscal-year revenue: <strong>not provided — replace with accurate information</strong>.</p>
   <p class="notice">${footerDisclaimer} No clinical validation or outcome evidence is claimed. Metrics are illustrative. Production privacy and safety controls require implementation and review.<br>${emergencyNotice}<br><strong>Replace every placeholder with accurate, verifiable information before submission.</strong></p>
   <button type="button" onclick="window.print()">Print / Save as PDF</button>
 </body>

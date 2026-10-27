@@ -16,6 +16,7 @@ import {
   contactCopy,
   emergencyNotice,
   faqs,
+  footerDescription,
   footerDisclaimer,
   footerGroups,
   onePageSummary,
@@ -415,7 +416,7 @@ export function Footer() {
               <Logo />
             </a>
             <p className="mt-4 max-w-sm text-base leading-7 text-[#52645D]">
-              Structured, evidence-informed fear journeys. Built around user choice and a more manageable next step.
+              {footerDescription}
             </p>
             <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#BFD2C1] bg-[#F7F8F2] px-3 py-2 text-xs font-medium text-[#063F32]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#08754D]" aria-hidden="true" />

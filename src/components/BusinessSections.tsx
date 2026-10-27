@@ -124,7 +124,7 @@ export function AcceleratorFit() {
       <div className="container">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr] lg:gap-16">
           <div><p className="mb-5 text-xs font-semibold uppercase tracking-[.14em] text-[#E8B93F]">07 / INSTITUTIONAL COLLABORATION</p><h2 className="max-w-2xl text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-tight text-white">Why this collaboration matters</h2></div>
-          <p className="max-w-[58ch] text-base leading-relaxed text-[#DAE8DE] lg:self-end">Healthcare and university expertise could help turn an early concept into a product that can be evaluated, governed, and integrated responsibly.</p>
+          <p className="max-w-[58ch] text-base leading-relaxed text-[#DAE8DE] lg:self-end">FearlessU aspires to long-term collaboration with Mayo Clinic and Arizona State University to evaluate personalized support and a separately governed original-research program.</p>
         </div>
 
         <ol className="mt-10 divide-y divide-white/20 border-y border-white/20">
@@ -143,7 +143,7 @@ export function AcceleratorFit() {
             {collaborationAreas.map((area) => <li key={area} className="flex items-start gap-3 text-base leading-relaxed text-[#DAE8DE]"><ArrowUpRight size={18} className="mt-1 shrink-0 text-[#E8B93F]" aria-hidden="true" />{area}</li>)}
           </ul>
         </div>
-        <p className="mt-8 border-t border-white/20 pt-5 text-xs leading-relaxed text-[#DAE8DE]">Proposed collaboration only. No institutional partnership, acceptance, or endorsement is claimed. Specific collaborators, program eligibility, and participation terms require confirmation.</p>
+        <p className="mt-8 border-t border-white/20 pt-5 text-xs leading-relaxed text-[#DAE8DE]">Long-term aspiration only. No FearlessU partnership, acceptance, or endorsement by Mayo Clinic or ASU is confirmed. The founder’s university affiliation is a separate academic relationship; collaborators, eligibility, and participation terms require confirmation.</p>
       </div>
     </section>
   );
@@ -183,9 +183,10 @@ export function TeamSection() {
           <article className="self-start rounded-3xl border border-[#DCE5DB] bg-[#EDF4EC] p-6 sm:p-8">
             <div className="mb-7 flex items-center gap-5"><span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#063F32] text-xl font-semibold text-[#E8B93F]" aria-label="Founder initials">VK</span><div><h3 className="text-xl font-semibold text-[#10251F]">{founder.name}</h3><p className="mt-1 text-base text-[#52645D]">{founder.role}</p></div></div>
             <p className="text-base leading-relaxed text-[#52645D]">{founder.bio}</p>
+            <p className="mt-4 text-xs leading-relaxed text-[#52645D]">{founder.institutionalContext}</p>
             <details className="group mt-6 border-t border-[#CFDDCF]">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3 text-base font-semibold text-[#063F32] [&::-webkit-details-marker]:hidden">Expertise & motivation to add<ChevronDown size={18} className="shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" /></summary>
-              <dl className="space-y-5 pb-2 text-base leading-relaxed"><div><dt className="font-semibold text-[#10251F]">Relevant expertise</dt><dd className="mt-1 text-[#52645D]">{founder.expertise}</dd></div><div><dt className="font-semibold text-[#10251F]">Founder motivation</dt><dd className="mt-1 text-[#52645D]">{founder.motivation}</dd></div></dl>
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3 text-base font-semibold text-[#063F32] [&::-webkit-details-marker]:hidden">Education & founding motivation<ChevronDown size={18} className="shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" /></summary>
+              <dl className="space-y-5 pb-2 text-base leading-relaxed"><div><dt className="font-semibold text-[#10251F]">Educational background</dt><dd className="mt-1 text-[#52645D]">{founder.expertise}</dd></div><div><dt className="font-semibold text-[#10251F]">Founder motivation</dt><dd className="mt-1 text-[#52645D]">{founder.motivation}</dd></div></dl>
             </details>
           </article>
           <div>
@@ -219,7 +220,7 @@ export function ApplicationSnapshot() {
                 <div key={item.title}><h3 className="mb-2 text-base font-semibold text-[#10251F]">{item.title}</h3><p className="max-w-[64ch] text-base leading-relaxed text-[#52645D]">{item.content}</p></div>
               ))}
             </div>
-            <p className="mt-7 flex items-start gap-2 rounded-xl bg-[#FFF8E7] p-4 text-xs leading-relaxed text-[#674F16]"><Check size={16} className="mt-0.5 shrink-0" aria-hidden="true" /><span>Edits remain only in this page’s memory. Nothing is submitted or stored. Founder background, customers, evidence, finances, and institutional relationships all require verification.</span></p>
+            <p className="mt-7 flex items-start gap-2 rounded-xl bg-[#FFF8E7] p-4 text-xs leading-relaxed text-[#674F16]"><Check size={16} className="mt-0.5 shrink-0" aria-hidden="true" /><span>Edits remain only in this page’s memory. Nothing is submitted or stored. Additional founder achievements, customers, evidence, finances, and any future institutional relationships require accurate supporting information.</span></p>
             <a href="#contact" className="mt-6 inline-flex min-h-11 items-center gap-2 text-base font-semibold text-[#08754D]">Discuss the concept<ArrowRight size={18} aria-hidden="true" /></a>
           </div>
         </details>

@@ -14,6 +14,15 @@ export const safetyStatusLegend = [
   { status: 'Planned validation', description: 'Production controls and research remain proposed.', kind: 'planned' },
 ] as const;
 
+export const researchGateStages = [
+  { title: 'Candidate hypothesis', detail: 'Document the proposed exercise, rationale, context, and risks.' },
+  { title: 'Expert & ethics review', detail: 'Qualified experts assess the proposal and required research oversight.' },
+  { title: 'Safety & clinical validation', detail: 'Evaluate the candidate through appropriate, reviewed research protocols.' },
+  { title: 'Recommendation decision', detail: 'Consider use only after those gates and applicable approvals; no automatic library entry.' },
+] as const;
+
+export const traumaResearchBoundary = 'The proposed Ukraine-focused mission is to develop trauma-informed psychological stabilization tools and PTSD support resources for military personnel and civilians affected by war and humanitarian crises. This research requires trauma-qualified experts, ethics review, suitability criteria, and independent oversight. The educational demo provides no PTSD treatment or trauma interventions.';
+
 export const safetyControls = [
   {
     title: 'Explainable, user-controlled steps',
@@ -36,6 +45,11 @@ export const safetyControls = [
     planned: 'Arrange ongoing qualified content review; test unsafe suggestions, accessibility, and subgroup and bias risks.',
   },
   {
+    title: 'Novel intervention research',
+    prototype: 'Local templates only. No original therapeutic strategy is generated, recommended, or clinically validated by this demo.',
+    planned: 'Treat original CBT-inspired exercises and intervention hypotheses as research. Require expert review, safety evaluation, and appropriate clinical validation before any therapeutic recommendation.',
+  },
+  {
     title: 'Auditability & accountability',
     prototype: 'Deterministic rules are inspectable in the source. No production monitoring or clinical audit trail exists.',
     planned: 'Version content and rules, explain recommendation decisions, and define privacy-conscious audit and incident review.',
@@ -52,22 +66,22 @@ export const evidencePhases = [
     number: '01',
     title: 'Usability & safety review',
     question: 'Is the experience understandable and appropriate?',
-    activities: ['Usability and accessibility testing', 'Engagement and completion measurement', 'Safety review and risk analysis', 'Qualified expert and user feedback'],
-    output: 'A refined intended use, prototype, and safety requirements.',
+    activities: ['Usability, accessibility, and engagement measurement', 'Qualified expert and user feedback', 'Review of original candidate exercises and intervention hypotheses', 'Safety, risk, and ethics requirements'],
+    output: 'A refined intended use and reviewed research hypotheses; no therapeutic recommendations.',
   },
   {
     number: '02',
     title: 'Feasibility & protocol',
     question: 'Can a carefully defined pilot be run responsibly?',
-    activities: ['Feasibility study design', 'Outcome measure selection', 'Protocol and participant criteria', 'Institutional collaboration and oversight'],
+    activities: ['Feasibility study design and outcome measures', 'Candidate-specific protocols and participant criteria', 'Institutional collaboration, ethics review, and independent oversight', 'Trauma-qualified expertise for any trauma-focused research'],
     output: 'A feasible protocol and proposed institutional pilot, subject to review.',
   },
   {
     number: '03',
     title: 'Controlled evaluation',
     question: 'What can the evidence support, and for whom?',
-    activities: ['Appropriate controlled evaluation', 'Subgroup and bias analysis', 'Health-economic assessment', 'Transparent reporting and publication strategy'],
-    output: 'Evidence to guide claims, suitability, and the clinical or regulatory pathway.',
+    activities: ['Appropriate controlled evaluation of reviewed candidates', 'Subgroup and bias analysis', 'Health-economic assessment', 'Transparent reporting and publication strategy'],
+    output: 'Evidence to determine whether any candidate could support a recommendation, claim, or clinical pathway.',
   },
 ] as const;
 

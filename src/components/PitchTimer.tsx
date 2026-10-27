@@ -141,8 +141,8 @@ export function PitchTimer() {
             </div>
 
             <p className="mt-5 border-l-2 border-[#E8B93F] pl-4 text-base leading-relaxed text-[#52645D]">
-              Fear often grows through avoidance. People know what they want to do,
-              but the next step can feel too large, too unclear, or too difficult to attempt alone.
+              Personalized mental health support and new intervention ideas need a responsible
+              path from hypothesis to evidence. FearlessU is exploring both.
             </p>
             <details className="group mt-3">
               <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-lg text-sm font-semibold text-[#063F32]">

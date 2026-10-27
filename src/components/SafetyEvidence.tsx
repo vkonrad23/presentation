@@ -1,86 +1,74 @@
 import {
-  Activity, ArrowRight, ArrowUpRight, BookOpen, Check, CheckCircle2,
-  ClipboardCheck, FileCheck2, Fingerprint, GitBranch, HeartHandshake,
-  Info, LockKeyhole, MessageCircle, ScanLine, ShieldCheck, SlidersHorizontal,
-  Sparkles, Target, X,
+  ArrowRight, BookOpen, Check, ClipboardList, FlaskConical, Info,
+  MessageCircle, MousePointer2, ShieldCheck, SlidersHorizontal, Target,
 } from 'lucide-react';
 import {
-  aiBoundaries, aiCapabilities, aiResponsibilities, aiSystemStages,
-  evidencePhases, privacyRequirements, proposedMeasures, safetyRequirements,
+  aiSystemStages, evidencePhases, proposedMeasures, safetyControls, safetyStatusLegend,
 } from '../data/safetyContent';
 
 const stageIcons = {
   goal: Target,
+  checkin: ClipboardList,
+  adjust: SlidersHorizontal,
   shield: ShieldCheck,
   library: BookOpen,
-  adjust: SlidersHorizontal,
-  activity: Activity,
+  choice: MousePointer2,
   feedback: MessageCircle,
-  adapt: GitBranch,
-  explain: Info,
-  human: HeartHandshake,
-  monitor: ScanLine,
+};
+
+const statusStyles = {
+  implemented: 'border-[#B7D9C5] bg-[#EDF4EC] text-[#063F32]',
+  development: 'border-[#DCE5DB] bg-white text-[#52645D]',
+  planned: 'border-[#E6D59D] bg-[#FFF8E7] text-[#68521C]',
 };
 
 export function AISystem() {
   return (
-    <section className="section bg-[#F1F6F0]" id="ai-safety" aria-labelledby="ai-system-title">
+    <section id="ai-safety" className="section bg-[#EDF4EC]" aria-labelledby="ai-system-title">
       <div className="container">
-        <div className="mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+        <div className="mb-9 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
           <div>
-            <p className="eyebrow">AI, with a clear framework</p>
-            <h2 id="ai-system-title" className="section-heading">Personalization needs<br className="hidden sm:block" /> a thoughtful foundation.</h2>
+            <p className="eyebrow">The intelligence behind a smaller step</p>
+            <h2 id="ai-system-title" className="section-heading">Adaptive by design.<br />Constrained by responsibility.</h2>
           </div>
-          <div className="max-w-lg">
-            <p className="text-base leading-relaxed text-[#607067]">The proposed system would adapt a structured experience within reviewed boundaries. A curated framework and human judgment remain essential.</p>
-            <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#DDE9E1] bg-white px-3 py-2 text-xs font-semibold text-[#0B3D2E]">
-              <Sparkles aria-hidden="true" size={14} /> Proposed architecture · No live AI in this demo
-            </p>
-          </div>
+          <p className="max-w-[62ch] text-base leading-7 text-[#52645D]">The proposed AI would personalize within an evidence-informed framework. This educational prototype demonstrates the interaction with local rules, without a live model or clinical assessment.</p>
         </div>
 
-        <div className="rounded-[1.75rem] border border-[#DDE9E1] bg-white p-5 shadow-[0_12px_40px_rgba(11,61,46,0.03)] sm:p-7">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#E8EEE7] pb-5">
-            <p className="flex items-center gap-2 text-sm font-semibold text-[#0B3D2E]"><GitBranch size={17} aria-hidden="true" /> A guided feedback loop</p>
-            <span className="text-xs text-[#607067]">Production design · Planned</span>
+        <div className="rounded-2xl border border-[#DCE5DB] bg-white p-5 shadow-[0_12px_32px_-24px_rgba(6,63,50,.2)] sm:p-8">
+          <div className="mb-7 flex flex-wrap items-center justify-between gap-3 border-b border-[#DCE5DB] pb-5">
+            <h3 className="flex items-center gap-2 text-base font-semibold text-[#063F32]"><SlidersHorizontal size={19} aria-hidden="true" /> The proposed personalization loop</h3>
+            <span className="rounded-full bg-[#FFF8E7] px-3 py-1.5 text-xs font-medium text-[#68521C]">Architecture concept · Local demonstration</span>
           </div>
-          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+
+          <ol className="relative space-y-5 before:absolute before:bottom-8 before:left-[19px] before:top-5 before:w-px before:bg-[#DCE5DB] xl:grid xl:grid-cols-7 xl:gap-5 xl:space-y-0 xl:before:bottom-auto xl:before:left-5 xl:before:right-5 xl:before:top-5 xl:before:h-px xl:before:w-auto">
             {aiSystemStages.map((stage, index) => {
               const Icon = stageIcons[stage.icon];
               return (
-                <li key={stage.title} className={`relative min-w-0 rounded-2xl p-5 ${index === 6 ? 'bg-[#FFF4C7] sm:col-span-2 lg:col-span-2' : 'bg-[#F8FBF7]'}`}>
-                  <div className="mb-5 flex items-center justify-between gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#0B3D2E]"><Icon size={20} aria-hidden="true" /></span>
-                    <span className="font-mono text-xs text-[#607067]">0{index + 1}</span>
+                <li key={stage.title} className="relative grid min-w-0 grid-cols-[40px_1fr] gap-x-4 xl:block">
+                  <span className="relative z-[1] flex h-10 w-10 items-center justify-center rounded-full border border-[#B7D9C5] bg-[#F7F8F2] text-[#063F32]" aria-hidden="true"><Icon size={18} /></span>
+                  <div className="grid gap-x-6 sm:grid-cols-[180px_1fr] xl:mt-5 xl:block">
+                    <div>
+                      <p className="mb-1 text-xs font-medium text-[#52645D]">0{index + 1}</p>
+                      <h4 className="text-base font-semibold leading-6 text-[#10251F]">{stage.title}</h4>
+                    </div>
+                    <div className="mt-2 sm:mt-0 xl:mt-3">
+                      <p className="text-base leading-6 text-[#52645D]">{stage.detail}</p>
+                      <span className="mt-3 inline-block text-xs font-medium text-[#08754D]">{stage.scope}</span>
+                    </div>
                   </div>
-                  <h3 className="pr-4 text-sm font-semibold text-[#14241D]">{stage.title}</h3>
-                  <p className="mt-2 max-w-md text-sm leading-relaxed text-[#607067]">{stage.detail}</p>
-                  {index < aiSystemStages.length - 1 ? <ArrowRight className="absolute right-4 top-[4.8rem] text-[#13A36D]" size={15} aria-hidden="true" /> : <ArrowUpRight className="absolute right-5 top-5 text-[#0B3D2E]" size={20} aria-hidden="true" />}
                 </li>
               );
             })}
           </ol>
-          <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-[#607067]"><Info className="mt-0.5 shrink-0" size={14} aria-hidden="true" />This prototype uses predefined, deterministic templates. The production content library, clinical review, screening, monitoring, and AI engine are planned and have not been validated.</p>
-        </div>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {aiResponsibilities.map((item) => {
-            const Icon = stageIcons[item.icon];
-            return <article key={item.title} className="min-w-0 rounded-2xl border border-[#DDE9E1] bg-white/70 p-6"><Icon size={22} className="mb-5 text-[#0B3D2E]" aria-hidden="true" /><h3 className="text-base font-semibold text-[#14241D]">{item.title}</h3><p className="mt-3 text-sm leading-relaxed text-[#607067]">{item.text}</p><p className="mt-4 text-[10px] font-bold uppercase tracking-[0.15em] text-[#607067]">Planned production requirement</p></article>;
-          })}
+          <div className="mt-7 flex items-start gap-3 border-t border-[#DCE5DB] pt-5 text-base leading-7 text-[#52645D]">
+            <Info size={18} className="mt-1 shrink-0 text-[#063F32]" aria-hidden="true" />
+            <p>The phrase check is incomplete and can miss risk. Future clinical screening, expert-reviewed content selection, model evaluation, and production safeguards require implementation and validation.</p>
+          </div>
         </div>
-
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
-          <div className="rounded-2xl bg-[#0B3D2E] p-6 text-white sm:p-8">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#BDE8CF]">Intended capabilities</p>
-            <h3 className="mb-5 text-xl font-semibold">What the AI would do</h3>
-            <ul className="space-y-4">{aiCapabilities.map((item) => <li key={item} className="flex gap-3 text-sm leading-relaxed text-[#E3F1E7]"><Check className="mt-0.5 shrink-0 text-[#F7C948]" size={16} aria-hidden="true" />{item}</li>)}</ul>
-          </div>
-          <div className="rounded-2xl border border-[#DDE9E1] bg-white p-6 sm:p-8">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#607067]">Boundaries</p>
-            <h3 className="mb-5 text-xl font-semibold text-[#14241D]">What the AI does not do</h3>
-            <ul className="space-y-4">{aiBoundaries.map((item) => <li key={item} className="flex gap-3 text-sm leading-relaxed text-[#607067]"><X className="mt-0.5 shrink-0 text-[#607067]" size={16} aria-hidden="true" />{item}</li>)}</ul>
-          </div>
+        <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-[70ch] text-base leading-7 text-[#52645D]">No autonomous diagnosis. No replacement for professional care. No promise of a clinical outcome.</p>
+          <a href="#journey" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-1 text-base font-semibold text-[#063F32]">Explore the local demo <ArrowRight size={17} aria-hidden="true" /></a>
         </div>
       </div>
     </section>
@@ -91,42 +79,32 @@ export function SafetySection() {
   return (
     <section id="safety" className="section bg-white" aria-labelledby="safety-title">
       <div className="container">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="eyebrow">Safety, privacy & clinical responsibility</p>
-          <h2 id="safety-title" className="section-heading">Trust is something<br className="hidden sm:block" /> we plan to earn.</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#607067]">Responsible development means making the scope clear today and specifying the safeguards that must be built, reviewed, and tested before production.</p>
-        </div>
-
-        <div className="mb-7 flex flex-col gap-4 rounded-2xl border border-[#DDE9E1] bg-[#F8FBF7] p-5 sm:flex-row sm:items-start sm:p-6">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E4EFE5] text-[#0B3D2E]"><Fingerprint size={22} aria-hidden="true" /></span>
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
           <div>
-            <h3 className="text-sm font-semibold text-[#14241D]">This prototype today</h3>
-            <p className="mt-2 text-sm leading-relaxed text-[#607067]">Inputs stay in memory in your browser. No form data is sent to a server, no sensitive entries are saved to local storage, and no live AI or clinical assessment runs. A basic local risk-language check can miss risk and is not validated suitability screening. Avoid entering personal or sensitive information.</p>
+            <p className="eyebrow">Responsible AI & data practices</p>
+            <h2 id="safety-title" className="section-heading">Clear boundaries.<br />Visible accountability.</h2>
           </div>
+          <p className="max-w-[62ch] text-base leading-7 text-[#52645D]">What a visitor can use today is distinct from what a production product would need. No completed clinical validation or production safety system is implied.</p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <article className="min-w-0 overflow-hidden rounded-[1.75rem] bg-[#0B3D2E] text-white">
-            <div className="border-b border-white/15 p-6 sm:p-8">
-              <div className="mb-6 flex items-center justify-between gap-4"><ShieldCheck size={30} className="text-[#F7C948]" aria-hidden="true" /><span className="rounded-full border border-[#94BBA3] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#E4F2E8]">Planned</span></div>
-              <h3 className="text-2xl font-semibold tracking-[-0.03em]">Safety architecture</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#CEE2D5]">Requirements for a future production product. These safeguards are not established by this demo.</p>
-            </div>
-            <ul className="divide-y divide-white/10 px-6 sm:px-8">
-              {safetyRequirements.map((item) => <li key={item.title} className="flex items-start gap-3 py-5"><span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-[#F7C948]"><ShieldCheck size={13} aria-hidden="true" /></span><div className="min-w-0"><h4 className="text-sm font-semibold">{item.title}</h4><p className="mt-1.5 text-xs leading-relaxed text-[#CEE2D5]">{item.detail}</p></div></li>)}
-            </ul>
-          </article>
-
-          <article className="min-w-0 rounded-[1.75rem] border border-[#DDE9E1] bg-[#F8FBF7] p-6 sm:p-8">
-            <div className="mb-6 flex items-center justify-between gap-4"><LockKeyhole size={30} className="text-[#0B3D2E]" aria-hidden="true" /><span className="rounded-full border border-[#CAD9CA] bg-white px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0B3D2E]">Planned</span></div>
-            <h3 className="text-2xl font-semibold tracking-[-0.03em] text-[#14241D]">Privacy by design</h3>
-            <p className="mt-3 text-sm leading-relaxed text-[#607067]">A proposed privacy roadmap, with production implementation and review still ahead.</p>
-            <ul className="mt-7 space-y-5">{privacyRequirements.map((item) => <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-[#40554A]"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#13A36D]" />{item}</li>)}</ul>
-            <div className="mt-8 rounded-2xl border border-[#E8DFB3] bg-[#FFF4C7] p-4"><p className="flex items-start gap-2 text-xs leading-relaxed text-[#5B542F]"><Info size={15} className="mt-0.5 shrink-0" aria-hidden="true" />No HIPAA compliance, security certification, regulatory clearance, or clinical validation has been established. Requirements depend on the final use, data, and markets.</p></div>
-          </article>
+        <div className="mb-8 flex flex-wrap gap-x-8 gap-y-5 rounded-xl border border-[#DCE5DB] bg-[#F7F8F2] p-5" aria-label="Feature status legend">
+          {safetyStatusLegend.map((item) => <div key={item.kind} className="max-w-xs"><span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${statusStyles[item.kind]}`}><span className={`h-1.5 w-1.5 rounded-full ${item.kind === 'implemented' ? 'bg-[#08754D]' : item.kind === 'development' ? 'bg-[#52645D]' : 'bg-[#82651F]'}`} aria-hidden="true" />{item.status}</span><p className="mt-2 text-xs leading-5 text-[#52645D]">{item.description}</p></div>)}
         </div>
 
-        <div className="mt-7 rounded-2xl border border-[#DDE9E1] p-5 sm:p-6"><p className="flex items-start gap-3 text-sm leading-relaxed text-[#607067]"><HeartHandshake size={21} className="mt-0.5 shrink-0 text-[#0B3D2E]" aria-hidden="true" /><span>FearlessU is an early-stage wellness technology concept. It is not a medical device, diagnostic tool, emergency service, or substitute for care from a qualified professional.</span></p></div>
+        <div className="border-y border-[#DCE5DB]">
+          <div className="hidden grid-cols-[.8fr_1.2fr_1.2fr] gap-8 border-b border-[#DCE5DB] bg-[#EDF4EC] px-5 py-4 text-xs font-semibold uppercase tracking-[.1em] text-[#063F32] md:grid">
+            <span>Responsibility</span><span>Implemented prototype · Actual scope</span><span>Planned validation · Before production</span>
+          </div>
+          <dl className="divide-y divide-[#DCE5DB]">
+            {safetyControls.map((control) => <div key={control.title} className="grid gap-4 px-0 py-6 md:grid-cols-[.8fr_1.2fr_1.2fr] md:gap-8 md:px-5"><dt className="text-base font-semibold leading-7 text-[#10251F]">{control.title}</dt><dd><span className="mb-2 block text-xs font-semibold text-[#08754D] md:hidden">Implemented prototype · Actual scope</span><p className="text-base leading-7 text-[#52645D]">{control.prototype}</p></dd><dd><span className="mb-2 block text-xs font-semibold text-[#68521C] md:hidden">Planned validation · Before production</span><p className="text-base leading-7 text-[#52645D]">{control.planned}</p></dd></div>)}
+          </dl>
+        </div>
+
+        <div className="mt-6 flex flex-col gap-5 rounded-xl bg-[#F7F8F2] p-5 sm:flex-row sm:items-start">
+          <span className="inline-flex shrink-0 rounded-full border border-[#DCE5DB] bg-white px-3 py-1.5 text-xs font-semibold text-[#52645D]">In development</span>
+          <p className="text-base leading-7 text-[#52645D]"><strong className="font-semibold text-[#10251F]">Prototype refinement.</strong> The educational interface and scenarios remain open to iteration. This status does not mean a clinical AI system, staffed service, or production safeguard is being delivered.</p>
+        </div>
+        <p className="mt-5 max-w-[95ch] text-base leading-7 text-[#52645D]">Use fictional examples; do not enter personal health information. No HIPAA compliance, security certification, or regulatory clearance is claimed. A future policy against selling sensitive information, legal review, and independently reviewed security remain production requirements.</p>
       </div>
     </section>
   );
@@ -134,16 +112,21 @@ export function SafetySection() {
 
 export function EvidenceRoadmap() {
   return (
-    <section id="evidence" className="section bg-[#F8FBF7]" aria-labelledby="evidence-title">
+    <section id="evidence" className="section bg-[#F7F8F2]" aria-labelledby="evidence-title">
       <div className="container">
-        <div className="mb-12 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-          <div className="max-w-2xl"><p className="eyebrow">Evidence & validation roadmap</p><h2 id="evidence-title" className="section-heading">A promising idea.<br />A deliberate path to evidence.</h2></div>
-          <p className="max-w-sm text-sm leading-relaxed text-[#607067]">The interactive prototype demonstrates an experience. It does not establish safety or effectiveness. Every research phase below is planned.</p>
+        <div className="mb-9 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+          <div><p className="eyebrow">Evidence before claims</p><h2 id="evidence-title" className="section-heading">A research plan.<br />Not a results page.</h2></div>
+          <div><p className="max-w-[62ch] text-base leading-7 text-[#52645D]">No completed study, clinical effectiveness, or validated outcome is claimed. The following phases are proposed and depend on qualified oversight, appropriate review, resources, and collaborators.</p><p className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-[#68521C]"><FlaskConical size={16} aria-hidden="true" />All phases · Planned validation</p></div>
         </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {evidencePhases.map((phase) => <article key={phase.number} className="flex min-w-0 flex-col rounded-2xl border border-[#DDE9E1] bg-white p-6"><div className="mb-7 flex items-center justify-between gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#EEF5EC] text-sm font-semibold text-[#0B3D2E]">{phase.number}</span><span className="rounded-full bg-[#FFF4C7] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#66551E]">Planned</span></div><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#607067]">{phase.focus}</p><h3 className="text-xl font-semibold leading-snug tracking-[-0.02em] text-[#14241D]">{phase.title}</h3><p className="mt-3 text-sm leading-relaxed text-[#607067]">{phase.description}</p><ul className="mb-7 mt-6 space-y-3">{phase.activities.map((activity) => <li key={activity} className="flex items-start gap-2 text-xs leading-relaxed text-[#40554A]"><CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[#13A36D]" aria-hidden="true" />{activity}</li>)}</ul><div className="mt-auto border-t border-[#E8EEE7] pt-5"><p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#607067]"><FileCheck2 size={13} aria-hidden="true" /> Proposed output</p><p className="mt-2 text-xs font-medium leading-relaxed text-[#0B3D2E]">{phase.output}</p></div></article>)}
+
+        <ol className="relative border-y border-[#DCE5DB] before:absolute before:bottom-8 before:left-5 before:top-8 before:w-px before:bg-[#DCE5DB]">
+          {evidencePhases.map((phase) => <li key={phase.number} className="relative grid grid-cols-[40px_1fr] gap-x-4 border-b border-[#DCE5DB] py-7 last:border-b-0 sm:gap-x-7"><span className="relative z-[1] flex h-10 w-10 items-center justify-center rounded-full border border-[#B8CDBE] bg-[#F7F8F2] text-xs font-semibold text-[#063F32]">{phase.number}</span><div className="grid gap-5 lg:grid-cols-[.9fr_1.2fr_1fr] lg:gap-8"><div><h3 className="text-xl font-semibold leading-7 tracking-[-.02em] text-[#10251F]">{phase.title}</h3><p className="mt-2 text-base leading-7 text-[#52645D]">{phase.question}</p></div><ul className="space-y-2">{phase.activities.map((activity) => <li key={activity} className="flex items-start gap-2.5 text-base leading-7 text-[#52645D]"><Check size={16} className="mt-1.5 shrink-0 text-[#08754D]" aria-hidden="true" />{activity}</li>)}</ul><div className="border-l-2 border-[#E8B93F] pl-5"><p className="text-xs font-semibold uppercase tracking-[.1em] text-[#52645D]">Proposed decision point</p><p className="mt-3 text-base leading-7 text-[#063F32]">{phase.output}</p></div></div></li>)}
+        </ol>
+
+        <div className="mt-7 grid gap-4 sm:grid-cols-[210px_1fr]">
+          <h3 className="text-base font-semibold leading-7 text-[#10251F]">Possible measures<br /><span className="text-xs font-normal text-[#52645D]">To be selected with clinical advisors</span></h3>
+          <div><ul className="flex flex-wrap gap-x-5 gap-y-2">{proposedMeasures.map((measure) => <li key={measure} className="flex items-start gap-2 text-base leading-7 text-[#52645D]"><span className="mt-3 h-1 w-1 shrink-0 rounded-full bg-[#08754D]" aria-hidden="true" />{measure}</li>)}</ul><p className="mt-3 text-xs leading-5 text-[#52645D]">Simulated dashboard values illustrate an interface only. They are not participants, traction, predicted improvement, or clinical evidence.</p></div>
         </div>
-        <div className="mt-7 rounded-2xl border border-[#DDE9E1] bg-[#EEF4EA] p-6 sm:p-8"><div className="mb-5 flex flex-wrap items-center gap-3"><ClipboardCheck size={22} className="text-[#0B3D2E]" aria-hidden="true" /><h3 className="text-base font-semibold text-[#14241D]">What we could measure</h3><span className="text-xs text-[#607067]">Proposed examples · To be selected with clinical advisors</span></div><ul className="flex flex-wrap gap-2">{proposedMeasures.map((measure) => <li key={measure} className="max-w-full rounded-full border border-[#D6E1D2] bg-white px-4 py-2 text-xs leading-relaxed text-[#40554A]">{measure}</li>)}</ul><p className="mt-5 text-xs leading-relaxed text-[#607067]">No participant study, validated clinical outcome, or quantified benefit is being claimed. Simulated charts elsewhere on this page illustrate a possible interface only.</p></div>
       </div>
     </section>
   );

@@ -1,40 +1,153 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { ArrowDown, ArrowRight, Check, CheckCheck, CheckCircle2, ChevronRight, Circle, Compass, Feather, HeartHandshake, Leaf, Lightbulb, LockKeyhole, RotateCcw, ShieldCheck, Sparkles, Wind } from 'lucide-react';
-import { buildJourney, categories, containsCrisisLanguage, crisisMessage, speakingJourney, type FearCategory, type GeneratedJourney, type JourneyPace } from '../data/demoJourneys';
+import {
+  ArrowRight, Check, CheckCheck, CheckCircle2, ChevronRight, Circle, Compass,
+  Feather, HeartHandshake, Leaf, Lightbulb, LockKeyhole, Pause, Play,
+  RotateCcw, ShieldCheck, Sparkles, Square, TrendingUp,
+} from 'lucide-react';
+import {
+  buildJourney, categories, containsCrisisLanguage, crisisMessage, demoScenarios,
+  getHeroRecommendation, nextStepFromFeedback, speakingJourney,
+  type DemoScenarioKey, type FearCategory, type GeneratedJourney,
+  type JourneyPace, type SessionCheckIn,
+} from '../data/demoJourneys';
 
-const heroRecommendations = [
-  { title: 'A little room to begin.', practice: 'Take five quiet minutes to notice your breathing and the room around you, if comfortable.', challenge: 'Prepare one sentence you might share with a small group. Trying it is optional.', reflection: 'What might help me feel supported as I begin?' },
-  { title: 'Make the next step smaller.', practice: 'Try a gentle five-minute grounding pause: notice your feet on the floor and a few things you can see.', challenge: 'Rehearse a short introduction privately. No sharing is needed today.', reflection: 'What feels manageable, and what support would help?' },
-  { title: 'Preparation is progress, too.', practice: 'Pause the challenge. If it feels helpful, orient to your surroundings at your own pace.', challenge: 'Keep this step as reflection only. Consider discussing this goal with a qualified professional.', reflection: 'Who could I reach out to for support?' },
-];
+interface RangeFieldProps {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  low?: string;
+  high?: string;
+}
+
+function RangeField({ id, label, value, onChange, low = 'Comfortable', high = 'Very difficult' }: RangeFieldProps) {
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={id} className="text-sm font-semibold text-[#10251F]">{label}</label>
+        <output htmlFor={id} className="rounded-lg bg-[#EDF4EC] px-3 py-1 text-sm font-semibold text-[#063F32]">
+          {value}<span className="font-normal text-[#52645D]"> / 10</span>
+        </output>
+      </div>
+      <input
+        id={id} type="range" min={0} max={10} value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="block min-h-11 w-full cursor-pointer accent-[#08754D]"
+      />
+      <div className="flex justify-between text-xs text-[#52645D]"><span>{low}</span><span>{high}</span></div>
+    </div>
+  );
+}
 
 export function ProductDemo() {
+  const [scenario, setScenario] = useState<DemoScenarioKey>('speaking');
   const [anxiety, setAnxiety] = useState(4);
-  const [adaptedAnxiety, setAdaptedAnxiety] = useState(4);
-  const [adaptations, setAdaptations] = useState(0);
-  const recommendation = heroRecommendations[adaptedAnxiety >= 8 ? 2 : adaptedAnxiety >= 5 ? 1 : 0];
+  const [applied, setApplied] = useState({ scenario: 'speaking' as DemoScenarioKey, anxiety: 4 });
+  const [updated, setUpdated] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const recommendation = getHeroRecommendation(applied.scenario, applied.anxiety);
+  const changed = applied.anxiety !== anxiety;
 
-  return <div className="relative mx-auto w-full max-w-[470px]" data-testid="product-demo">
-    <div className="pointer-events-none absolute -right-6 -top-8 h-36 w-36 rounded-full bg-[#F7C948]/25 blur-2xl" />
-    <div className="relative rounded-[28px] border border-[#DDE9E1] bg-white p-5 shadow-[0_28px_75px_-34px_rgba(11,61,46,0.35)] sm:p-7">
-      <div className="mb-6 flex items-center justify-between gap-3 border-b border-[#EAF0E9] pb-5">
-        <div className="flex items-center gap-2.5"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E8F5ED] text-[#0B3D2E]"><Leaf size={20} /></span><span className="font-semibold text-[#0B3D2E]">Your daily space</span></div>
-        <span className="rounded-full bg-[#FFF4C7] px-3 py-1 text-[10px] font-bold uppercase tracking-[.13em] text-[#685116]">Prototype</span>
+  function adapt() {
+    setApplied({ scenario, anxiety });
+    setUpdated(true);
+    setPaused(false);
+  }
+
+  function chooseScenario(value: DemoScenarioKey) {
+    setScenario(value); setApplied({ scenario: value, anxiety }); setUpdated(false); setPaused(false);
+  }
+
+  return (
+    <div className="relative w-full" data-testid="product-demo">
+      <div className="relative rounded-[28px] border border-[#DCE5DB] bg-white p-5 text-[#10251F] shadow-[0_24px_70px_-34px_rgba(6,63,50,0.28)] sm:p-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EDF4EC] text-[#063F32]"><Leaf size={23} /></span>
+            <div><p className="mb-1 text-xs text-[#52645D]">A small step, chosen by you</p><h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Today’s Fear Journey</h2></div>
+          </div>
+          <span className="rounded-full border border-[#E6D391] bg-[#FFF8E7] px-2.5 py-1.5 text-xs font-semibold text-[#6E5313]">Prototype</span>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="hero-scenario" className="mb-2 block text-xs font-semibold uppercase tracking-[.1em] text-[#52645D]">Explore a scenario</label>
+          <select id="hero-scenario" className="field w-full bg-[#F7F8F2] text-sm" value={scenario} onChange={(event) => chooseScenario(event.target.value as DemoScenarioKey)}>
+            {demoScenarios.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+          </select>
+        </div>
+
+        <RangeField id="hero-anxiety" label="How does it feel right now?" value={anxiety} onChange={setAnxiety} />
+
+        <div className="mt-4 min-h-[224px] rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-4" data-testid="hero-recommendation">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-xs font-semibold text-[#08754D]"><Compass size={16} /> Your suggested next step</span>
+            <span className="text-xs text-[#52645D]">{paused ? 'Paused' : 'Private practice'}</span>
+          </div>
+          <h3 className="mb-2 text-lg font-semibold text-[#063F32]">{paused ? 'Take the time you need.' : recommendation.title}</h3>
+          <p className="min-h-[72px] text-base leading-relaxed text-[#10251F]">
+            {paused ? 'The practice is paused. Nothing needs to be completed. Resume only if you choose.' : recommendation.activity}
+          </p>
+          <div className="mt-3 border-t border-[#DCE5DB] pt-3">
+            <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-[#063F32]"><Lightbulb size={14} /> Why this suggestion?</p>
+            <p className="text-xs leading-relaxed text-[#52645D]">{recommendation.reason}</p>
+          </div>
+        </div>
+
+        <p role="status" className="min-h-12 py-2 text-xs leading-relaxed text-[#52645D]">
+          {changed ? 'Your check-in changed. Adapt when you are ready.' : updated ? `Updated for ${applied.anxiety}/10 using predefined local rules. Your choice comes first.` : 'Predefined local rules demonstrate personalization. No live AI is running.'}
+        </p>
+        <div className="grid grid-cols-[1fr_auto] gap-2">
+          <button className="button w-full justify-center" type="button" onClick={adapt}>Adapt next step <ArrowRight size={17} /></button>
+          <button
+            type="button" className="button button-secondary min-w-11 px-3"
+            onClick={() => setPaused((value) => !value)} aria-pressed={paused}
+            aria-label={paused ? 'Resume hero practice' : 'Pause hero practice'}
+          >
+            {paused ? <Play size={17} /> : <Pause size={17} />}
+          </button>
+        </div>
+        <p className="mt-3 text-center text-xs leading-relaxed text-[#52645D]">Educational prototype. Not medical advice.<br />No diagnosis · no live AI · no information saved</p>
       </div>
-      <div className="mb-5 flex items-center justify-between gap-3"><div><p className="mb-1 text-xs text-[#607067]">A small step, chosen by you</p><h2 className="text-xl font-semibold tracking-tight text-[#14241D]">Today’s Fear Journey</h2></div><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F4F8F2] text-[#08764E]"><Sparkles size={18} /></div></div>
-      <div className="mb-5 rounded-2xl bg-[#F6F9F3] p-4"><p className="mb-1 text-[10px] font-bold uppercase tracking-[.15em] text-[#607067]">Your current goal</p><p className="text-sm font-semibold text-[#0B3D2E]">Speak confidently in a small group</p><div className="mt-4 flex items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#DDE9E1]"><span className="block h-full w-2/5 rounded-full bg-[#13A36D]" /></span><span className="text-[10px] text-[#607067]">Step 2 of 5 · illustrative</span></div></div>
-      <div className="mb-5"><div className="mb-3 flex items-center justify-between"><label htmlFor="hero-anxiety" className="text-xs font-semibold text-[#14241D]">How does it feel right now?</label><output htmlFor="hero-anxiety" className="rounded-lg bg-[#E8F5ED] px-2 py-1 text-xs font-bold text-[#0B3D2E]">{anxiety}<span className="font-normal text-[#607067]"> / 10</span></output></div><input id="hero-anxiety" data-testid="hero-anxiety" className="w-full accent-[#13A36D]" type="range" min={0} max={10} value={anxiety} onChange={(event) => setAnxiety(Number(event.target.value))} /><div className="mt-1 flex justify-between text-[10px] text-[#607067]"><span>Comfortable</span><span>Very difficult</span></div></div>
-      <div aria-live="polite" aria-atomic="true" className="space-y-3" data-testid="hero-recommendation">
-        <div className="flex gap-3 rounded-2xl border border-[#DDE9E1] p-3.5"><Wind className="mt-0.5 shrink-0 text-[#08764E]" size={18} /><div><p className="mb-1 text-xs font-semibold">{adaptedAnxiety >= 8 ? 'Pause & orient' : '5-minute preparation'}</p><p className="text-xs leading-relaxed text-[#607067]">{recommendation.practice}</p></div></div>
-        <div className="flex gap-3 rounded-2xl border border-[#E9DFC0] bg-[#FFFCF0] p-3.5"><Compass className="mt-0.5 shrink-0 text-[#806218]" size={18} /><div><p className="mb-1 text-xs font-semibold">{recommendation.title}</p><p className="text-xs leading-relaxed text-[#607067]">{recommendation.challenge}</p></div></div>
-        <p className="flex gap-2 px-1 text-xs leading-relaxed text-[#607067]"><Lightbulb size={15} className="mt-0.5 shrink-0 text-[#94721B]" />{recommendation.reflection}</p>
-        {adaptations > 0 && <p className="text-xs text-[#0B3D2E]" role="status">Updated for your check-in of {adaptedAnxiety}/10 using local rules.</p>}
-      </div>
-      <button className="button mt-5 w-full justify-center" type="button" onClick={() => { setAdaptedAnxiety(anxiety); setAdaptations((count) => count + 1); }}>Adapt next step <ArrowRight size={16} /></button>
-      <p className="mt-3 text-center text-[10px] leading-relaxed text-[#607067]">Interactive prototype. Not medical advice.<br />Local demonstration · no live AI · nothing is saved</p>
     </div>
-    <div className="absolute -bottom-5 -left-4 hidden items-center gap-2.5 rounded-2xl border border-[#E6ECDC] bg-white px-4 py-3 shadow-lg sm:flex"><span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFF4C7] text-[#0B3D2E]"><Check size={17} /></span><div><p className="text-[10px] text-[#607067]">Your pace. Your choice.</p><p className="text-xs font-semibold text-[#0B3D2E]">Small steps count.</p></div></div>
-  </div>;
+  );
+}
+
+type JourneyStage = 'empty' | 'ready' | 'practice' | 'reflection' | 'complete' | 'paused' | 'stopped';
+type ActiveStage = 'ready' | 'practice' | 'reflection';
+
+function SessionSummary({ records }: { records: SessionCheckIn[] }) {
+  const latest = records.at(-1);
+  const first = records[0];
+  const change = latest && first ? latest.after - first.before : 0;
+
+  return (
+    <div className="rounded-2xl border border-[#DCE5DB] bg-white p-5" data-testid="session-summary">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h3 className="flex items-center gap-2 text-base font-semibold text-[#063F32]"><TrendingUp size={18} /> Your demo session</h3>
+        <span className="text-xs text-[#52645D]">Memory only</span>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div><p className="text-2xl font-semibold text-[#063F32]">{records.length}</p><p className="mt-1 text-xs text-[#52645D]">Reflection{records.length === 1 ? '' : 's'} completed</p></div>
+        <div><p className="text-2xl font-semibold text-[#063F32]">{latest ? `${latest.confidence}/10` : '—'}</p><p className="mt-1 text-xs text-[#52645D]">Latest demo confidence</p></div>
+      </div>
+      {records.length > 0 ? (
+        <>
+          <div className="mt-5 border-t border-[#DCE5DB] pt-4">
+            <p className="mb-3 text-xs font-semibold text-[#52645D]">Difficulty check-ins · before → after</p>
+            <ol className="max-h-40 space-y-2 overflow-y-auto pr-1" aria-label="Session difficulty trend">
+              {records.map((record, index) => (
+                <li key={record.id} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="text-[#52645D]">Practice {index + 1}</span>
+                  <span className="font-medium text-[#063F32]">{record.before} → {record.after} / 10</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <p className="mt-4 text-xs leading-relaxed text-[#52645D]">{change === 0 ? 'No net change' : `${Math.abs(change)} point${Math.abs(change) === 1 ? '' : 's'} ${change > 0 ? 'higher' : 'lower'}`} from the first check-in. These are your demo inputs, not a clinical outcome or evidence of benefit.</p>
+        </>
+      ) : <p className="mt-4 text-xs leading-relaxed text-[#52645D]">Complete a reflection to see your inputs here. Nothing is prefilled, sent, or retained after a refresh.</p>}
+    </div>
+  );
 }
 
 export function JourneyDemo() {
@@ -42,67 +155,298 @@ export function JourneyDemo() {
   const [category, setCategory] = useState<FearCategory>('speaking');
   const [difficulty, setDifficulty] = useState(5);
   const [pace, setPace] = useState<JourneyPace>('Gentle');
+  const [scenario, setScenario] = useState<DemoScenarioKey | undefined>();
   const [result, setResult] = useState<GeneratedJourney | null>(null);
+  const [stage, setStage] = useState<JourneyStage>('empty');
+  const [pausedFrom, setPausedFrom] = useState<ActiveStage>('ready');
   const [error, setError] = useState('');
   const [crisis, setCrisis] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [practiceDifficulty, setPracticeDifficulty] = useState(5);
+  const [suggestion, setSuggestion] = useState('');
+  const [suggestionReason, setSuggestionReason] = useState('');
+  const [after, setAfter] = useState(4);
+  const [confidence, setConfidence] = useState(5);
+  const [experience, setExperience] = useState<SessionCheckIn['experience']>('Manageable');
+  const [reflection, setReflection] = useState('');
+  const [records, setRecords] = useState<SessionCheckIn[]>([]);
   const timer = useRef<number | undefined>(undefined);
   const resultRef = useRef<HTMLDivElement>(null);
-  useEffect(() => () => { window.clearTimeout(timer.current); }, []);
+  const latest = records.at(-1);
+  const nextSuggestion = result && latest ? nextStepFromFeedback(result, latest) : null;
+  const active = stage === 'ready' || stage === 'practice' || stage === 'reflection';
+
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  function clearPractice() {
+    window.clearTimeout(timer.current);
+    setResult(null); setStage('empty'); setError(''); setCrisis(false); setLoading(false);
+    setRecords([]); setReflection(''); setAfter(4); setConfidence(5); setExperience('Manageable');
+  }
 
   function reset() {
-    window.clearTimeout(timer.current);
-    setLoading(false); setResult(null); setError(''); setCrisis(false);
-    setGoal(''); setCategory('speaking'); setDifficulty(5); setPace('Gentle');
+    clearPractice();
+    setGoal(''); setCategory('speaking'); setDifficulty(5); setPace('Gentle'); setScenario(undefined);
+  }
+
+  function chooseScenario(value: DemoScenarioKey) {
+    const selected = demoScenarios.find((item) => item.value === value);
+    if (!selected) return;
+    clearPractice(); setScenario(value); setGoal(selected.label); setCategory(selected.category);
   }
 
   function generate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     window.clearTimeout(timer.current);
-    setResult(null); setError(''); setCrisis(false); setLoading(false);
-    if (containsCrisisLanguage(goal)) { setCrisis(true); return; }
-    if (goal.trim().length < 6) { setError('Describe a goal in at least 6 characters so the sample has a clear focus.'); return; }
+    setError(''); setCrisis(false); setLoading(false);
+    if (containsCrisisLanguage(goal)) {
+      setCrisis(true); setStage('stopped'); setResult(null); setReflection(''); setRecords([]); return;
+    }
+    if (goal.trim().length < 6) {
+      clearPractice();
+      setError('Describe a goal in at least 6 characters, or choose an example above.'); return;
+    }
     setLoading(true);
     timer.current = window.setTimeout(() => {
-      setResult(buildJourney(goal, category, difficulty, pace));
-      setLoading(false);
-      window.setTimeout(() => resultRef.current?.focus(), 0);
-    }, 350);
+      const journey = buildJourney(goal, category, difficulty, pace, scenario);
+      setResult(journey); setPracticeDifficulty(difficulty); setAfter(difficulty);
+      setSuggestion(journey.steps[difficulty >= 5 ? 0 : 1]); setSuggestionReason(journey.guidance);
+      setReflection(''); setRecords([]); setStage('ready'); setLoading(false);
+      resultRef.current?.focus({ preventScroll: true });
+    }, 250);
   }
 
-  return <section className="section scroll-mt-28 bg-[#EFF5EB]" id="journey" aria-labelledby="journey-title">
-    <div className="container">
-      <div className="mx-auto mb-10 max-w-2xl text-center"><p className="eyebrow justify-center"><Sparkles size={14} /> Try a small beginning</p><h2 id="journey-title" className="section-heading">A goal that matters.<br /><span className="text-[#08764E]">A next step that fits.</span></h2><p className="muted mt-4">Explore a sample journey shaped around your preferences. No account, no live AI, and no personal information needed.</p></div>
-      <div className="grid gap-6 lg:grid-cols-[1fr_1.03fr]">
-        <form onSubmit={generate} noValidate className="rounded-[24px] border border-[#DDE9E1] bg-white p-6 sm:p-8" aria-label="Fear journey builder">
-          <div className="mb-7 flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F5ED] text-[#0B3D2E]"><Compass size={20} /></span><div><h3 className="text-lg font-semibold">Make it your journey</h3><p className="text-xs text-[#607067]">Use a fictional goal to explore the prototype.</p></div></div>
-          <div className="space-y-6">
-            <div><label className="field-label" htmlFor="journey-goal">What would you like to feel more confident doing?</label><input id="journey-goal" className="field mt-2 w-full" value={goal} maxLength={180} onChange={(event) => { setGoal(event.target.value); setError(''); }} placeholder="e.g. Share an idea in a team meeting" aria-describedby="journey-goal-hint journey-feedback" aria-invalid={Boolean(error)} required /><p id="journey-goal-hint" className="mt-2 text-xs leading-relaxed text-[#607067]">Please do not enter medical history or identifying details.</p></div>
-            <div><label className="field-label" htmlFor="journey-category">Fear category</label><select id="journey-category" className="field mt-2 w-full" value={category} onChange={(event) => setCategory(event.target.value as FearCategory)}>{categories.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
-            <div><div className="mb-3 flex items-center justify-between"><label className="field-label" htmlFor="journey-difficulty">Current difficulty</label><output htmlFor="journey-difficulty" className="rounded-full bg-[#E8F5ED] px-3 py-1 text-xs font-semibold text-[#0B3D2E]">{difficulty} / 10</output></div><input id="journey-difficulty" className="w-full accent-[#13A36D]" type="range" min={0} max={10} value={difficulty} onChange={(event) => setDifficulty(Number(event.target.value))} /><div className="mt-1 flex justify-between text-xs text-[#607067]"><span>Comfortable</span><span>Very difficult</span></div></div>
-            <fieldset><legend className="field-label mb-3">Your preferred pace</legend><div className="grid grid-cols-3 gap-2">{(['Gentle', 'Balanced', 'Challenging'] as JourneyPace[]).map((item) => <label key={item} className={`relative cursor-pointer rounded-xl border px-1 py-3 text-center text-xs font-semibold transition-colors ${pace === item ? 'border-[#0B3D2E] bg-[#E8F5ED] text-[#0B3D2E]' : 'border-[#DDE9E1] bg-white text-[#607067]'}`}><input className="peer sr-only" type="radio" name="journey-pace" value={item} checked={pace === item} onChange={() => setPace(item)} /><span className="pointer-events-none absolute inset-0 rounded-xl peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#0B3D2E]" />{item}</label>)}</div></fieldset>
+  function adapt() {
+    if (!result) return;
+    const updated = buildJourney(result.goal, result.category.value, practiceDifficulty, result.pace, result.scenario);
+    setResult(updated); setSuggestion(updated.steps[practiceDifficulty >= 5 ? 0 : 1]);
+    setSuggestionReason(`Adapted for your difficulty of ${practiceDifficulty}/10. ${updated.guidance}`);
+    setAfter(practiceDifficulty);
+  }
+
+  function pause() {
+    if (stage === 'ready' || stage === 'practice' || stage === 'reflection') {
+      setPausedFrom(stage); setStage('paused');
+    }
+  }
+
+  function stop() {
+    setStage('stopped'); setReflection(''); setError('');
+  }
+
+  function completeReflection(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (containsCrisisLanguage(reflection)) {
+      setCrisis(true); setStage('stopped'); setReflection(''); setResult(null); setRecords([]); return;
+    }
+    const record: SessionCheckIn = { id: Date.now(), before: practiceDifficulty, after, confidence, experience };
+    setRecords((items) => [...items, record]); setReflection(''); setStage('complete'); setError('');
+  }
+
+  function tryNextStep() {
+    if (!nextSuggestion || !latest) return;
+    setSuggestion(nextSuggestion.activity); setSuggestionReason(nextSuggestion.reason);
+    setPracticeDifficulty(latest.after); setAfter(latest.after); setExperience('Manageable'); setStage('ready');
+  }
+
+  return (
+    <section className="section scroll-mt-28 bg-[#EDF4EC]" id="journey" aria-labelledby="journey-title">
+      <div className="container">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
+          <div><p className="eyebrow">The working prototype</p><h2 id="journey-title" className="section-heading">A small step.<br />A thoughtful feedback loop.</h2></div>
+          <p className="max-w-xl text-base leading-relaxed text-[#52645D]">Choose a goal, explore a suggestion, and reflect. See how your feedback can shape a next step—using transparent local rules, at your pace.</p>
+        </div>
+
+        <div className="mb-7 rounded-2xl border border-[#D0DDCE] bg-white/70 p-4 sm:p-5">
+          <p className="mb-3 text-sm font-semibold text-[#063F32]">Start with an example, or make your own</p>
+          <div className="grid gap-2 md:grid-cols-3">
+            {demoScenarios.map((item, index) => (
+              <button
+                key={item.value} type="button" onClick={() => chooseScenario(item.value)}
+                aria-pressed={scenario === item.value}
+                className={`flex min-h-14 items-center gap-3 rounded-xl border p-3 text-left text-sm font-medium transition-colors ${scenario === item.value ? 'border-[#063F32] bg-[#EDF4EC] text-[#063F32]' : 'border-[#DCE5DB] bg-white text-[#52645D] hover:border-[#9DB7A6]'}`}
+              >
+                <span className="text-xs text-[#52645D]">0{index + 1}</span><span>{item.label}</span>
+              </button>
+            ))}
           </div>
-          <div id="journey-feedback" className="mt-5" aria-live="polite">{error && <p role="alert" className="rounded-xl border border-[#E8BDB4] bg-[#FFF3EE] p-3 text-sm text-[#8C3325]">{error}</p>}{crisis && <div role="alert" className="rounded-xl border border-[#E8BDB4] bg-[#FFF3EE] p-4"><p className="text-sm font-semibold leading-relaxed text-[#8C3325]">{crisisMessage}</p><p className="mt-2 text-xs leading-relaxed text-[#80554B]">No journey has been generated. This demo cannot assess risk or provide crisis counseling.</p></div>}</div>
-          <button type="submit" disabled={loading} className="button mt-5 w-full justify-center disabled:cursor-wait disabled:opacity-70">{loading ? 'Preparing your sample…' : 'Generate journey'}{loading ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white motion-reduce:animate-none" aria-hidden="true" /> : <ArrowRight size={17} />}</button>
-          <p className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-[#607067]"><LockKeyhole size={11} /> Your inputs stay in this page and disappear when refreshed.</p>
-        </form>
-        <div ref={resultRef} tabIndex={-1} className="rounded-[24px] border border-[#DDE9E1] bg-[#FAFCF8] p-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B3D2E] sm:p-8" data-testid="journey-result" aria-label="Your sample journey" aria-busy={loading}>
-          {result ? <>
-            <div className="mb-5 flex items-start justify-between gap-3"><div><span className="badge mb-3 inline-flex items-center gap-1.5"><CheckCircle2 size={12} /> Illustrative journey</span><h3 className="text-2xl font-semibold leading-tight tracking-tight text-[#0B3D2E]">{result.goal}</h3><p className="mt-2 text-xs text-[#607067]">{result.category.label} · {result.pace} pace · Difficulty {result.difficulty}/10</p></div><span className="rounded-full bg-[#FFF4C7] p-2.5 text-[#0B3D2E]"><Feather size={20} /></span></div>
-            <p className="mb-5 rounded-xl bg-[#EAF2E5] p-3 text-xs leading-relaxed text-[#36543B]">{result.guidance}</p>
-            <p className="mb-4 text-xs leading-relaxed text-[#607067]"><strong className="text-[#14241D]">Before you begin:</strong> {result.category.preparation}</p>
-            <ol className="space-y-3">{result.steps.map((step, index) => <li key={step} className="flex gap-3 rounded-xl border border-[#E3EBDD] bg-white p-4"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E8F5ED] text-xs font-semibold text-[#0B3D2E]">{index + 1}</span><p className="pt-1 text-sm leading-relaxed text-[#32483B]">{step}</p></li>)}</ol>
-            <div className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-[#607067]"><HeartHandshake className="mt-0.5 shrink-0 text-[#08764E]" size={17} /><p>{result.category.limitation} You can pause or stop at any time. This is a template, not an assessment or treatment plan.</p></div>
-            <button className="button button-secondary mt-5 w-full justify-center" type="button" onClick={reset}><RotateCcw size={15} /> Start again</button>
-          </> : <div className="flex h-full min-h-[450px] flex-col items-center justify-center text-center">
-            <div className="relative mb-8 flex h-32 w-32 items-center justify-center rounded-full border border-[#DBE7D4]"><span className="absolute inset-3 rounded-full border border-[#E0EBD9]" /><span className="flex h-20 w-20 items-center justify-center rounded-full bg-[#FFF4C7] text-[#0B3D2E]"><Feather size={32} strokeWidth={1.3} /></span><span className="absolute -right-1 top-5 rounded-full bg-white p-2 shadow-sm"><Leaf size={15} className="text-[#08764E]" /></span></div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[.2em] text-[#08764E]">There is no perfect first step</p><h3 className="max-w-xs text-3xl font-semibold leading-tight tracking-tight text-[#0B3D2E]">Just one that feels<br />possible today.</h3><p className="mt-4 max-w-xs text-sm leading-relaxed text-[#607067]">Your sample will appear here. Start with a goal, choose a pace, and explore a gentler way forward.</p><span className="mt-8 flex items-center gap-2 text-xs text-[#607067]"><ArrowDown size={14} className="lg:-rotate-90" /> Begin with the form</span>
-          </div>}
+        </div>
+
+        <div className="grid items-start gap-6 lg:grid-cols-[.85fr_1.15fr]">
+          <div className="space-y-6">
+            <form onSubmit={generate} noValidate className="rounded-[24px] border border-[#DCE5DB] bg-white p-5 sm:p-7" aria-label="Fear journey builder">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EDF4EC] text-[#063F32]"><Compass size={23} /></span>
+                <div><h3 className="text-xl font-semibold text-[#10251F]">Begin with what matters</h3><p className="mt-1 text-xs text-[#52645D]">Use a fictional goal to explore.</p></div>
+              </div>
+              <div className="space-y-5">
+                <div>
+                  <label className="field-label" htmlFor="journey-goal">What would you like to feel more confident doing?</label>
+                  <input
+                    id="journey-goal" className="field mt-2" value={goal} maxLength={180} required
+                    onChange={(event) => { setGoal(event.target.value); setScenario(undefined); setError(''); }}
+                    placeholder="e.g. Share an idea in a team meeting"
+                    aria-describedby="journey-goal-hint journey-feedback" aria-invalid={Boolean(error)}
+                  />
+                  <p id="journey-goal-hint" className="mt-2 text-xs leading-relaxed text-[#52645D]">Please leave out medical history and identifying details.</p>
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="journey-category">Fear category</label>
+                  <select id="journey-category" className="field mt-2" value={category} onChange={(event) => { setCategory(event.target.value as FearCategory); setScenario(undefined); }}>
+                    {categories.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                  </select>
+                </div>
+                <RangeField id="journey-difficulty" label="Current difficulty" value={difficulty} onChange={setDifficulty} />
+                <fieldset>
+                  <legend className="field-label mb-3">Your preferred pace</legend>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['Gentle', 'Balanced', 'Challenging'] as JourneyPace[]).map((item) => (
+                      <label key={item} className={`relative flex min-h-11 cursor-pointer items-center justify-center rounded-xl border px-1 py-3 text-xs font-semibold ${pace === item ? 'border-[#063F32] bg-[#EDF4EC] text-[#063F32]' : 'border-[#DCE5DB] text-[#52645D]'}`}>
+                        <input className="peer sr-only" type="radio" name="journey-pace" value={item} checked={pace === item} onChange={() => setPace(item)} />
+                        <span className="pointer-events-none absolute inset-0 rounded-xl peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#063F32]" />{item}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
+              <div id="journey-feedback" className="mt-4 min-h-12" aria-live="polite">
+                {error && <p role="alert" className="rounded-xl border border-[#E5BDB2] bg-[#FFF3EE] p-3 text-sm text-[#8A3223]">{error}</p>}
+                {!error && !crisis && <p className="text-xs leading-relaxed text-[#52645D]">You stay in control. You can make a step smaller, pause, or stop.</p>}
+              </div>
+              <button type="submit" disabled={loading} className="button mt-3 w-full justify-center">
+                {loading ? 'Preparing your sample…' : 'Generate journey'}
+                {loading ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white motion-reduce:animate-none" aria-hidden="true" /> : <ArrowRight size={17} />}
+              </button>
+              <button className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 text-sm font-semibold text-[#52645D] hover:text-[#063F32]" type="button" onClick={reset}><RotateCcw size={15} /> Start again / clear session</button>
+              <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-[#52645D]"><LockKeyhole size={14} className="mt-0.5" />Inputs remain in this page’s memory. Refreshing clears them. Nothing is sent or stored in your browser.</p>
+            </form>
+            <SessionSummary records={records} />
+          </div>
+
+          <div
+            ref={resultRef} tabIndex={-1} className="min-h-[780px] rounded-[24px] border border-[#DCE5DB] bg-[#F7F8F2] p-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#063F32] sm:p-7"
+            data-testid="journey-result" aria-label="Your sample journey" aria-busy={loading}
+          >
+            <JourneyProgress stage={stage} />
+            <div className="min-h-12 py-3" aria-live="polite">
+              <p className="text-xs leading-relaxed text-[#52645D]">{loading ? 'Selecting from predefined sample activities…' : stage === 'complete' ? 'Reflection completed. Your demo session has been updated.' : stage === 'paused' ? 'Practice paused. Resume only when you choose.' : stage === 'stopped' ? 'Practice stopped. No further action is required.' : 'Educational prototype. Not a substitute for professional care.'}</p>
+            </div>
+
+            {crisis ? <SafetyBoundary /> : result ? (
+              <>
+                <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[#08754D]"><Sparkles size={14} /> Local personalization demo</span>
+                <h3 className="text-2xl font-semibold leading-tight tracking-tight text-[#063F32]">{result.goal}</h3>
+                <p className="mt-2 text-xs text-[#52645D]">{result.category.label} · {result.pace} pace</p>
+
+                {stage === 'paused' || stage === 'stopped' ? (
+                  <div className="mt-6 min-h-[420px] rounded-2xl border border-[#DCE5DB] bg-white p-6">
+                    <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#EDF4EC] text-[#063F32]">{stage === 'paused' ? <Pause size={22} /> : <Square size={20} />}</span>
+                    <h4 className="text-xl font-semibold text-[#063F32]">{stage === 'paused' ? 'There is room to pause.' : 'Your practice has stopped.'}</h4>
+                    <p className="mt-3 text-base leading-relaxed text-[#52645D]">{stage === 'paused' ? 'Your place is kept in this page. There is no timer, score, or expectation to continue.' : 'No more practice is suggested here. Previous demo check-ins remain visible until you clear the session or refresh.'}</p>
+                    {stage === 'paused' && <div className="mt-6 flex flex-wrap gap-3"><button type="button" className="button" onClick={() => setStage(pausedFrom)}><Play size={16} /> Resume practice</button><button type="button" className="button button-secondary" onClick={stop}><Square size={15} /> Stop practice</button></div>}
+                    {stage === 'stopped' && <button type="button" className="button button-secondary mt-6" onClick={reset}><RotateCcw size={16} /> Clear and start again</button>}
+                    <p className="mt-5 text-sm leading-relaxed text-[#52645D]">If distress is substantial or this activity does not feel suitable, talk with a qualified professional.</p>
+                  </div>
+                ) : stage === 'complete' && nextSuggestion ? (
+                  <div className="mt-6 min-h-[420px] rounded-2xl border border-[#DCE5DB] bg-white p-5 sm:p-6">
+                    <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#EDF4EC] text-[#08754D]"><CheckCircle2 size={24} /></span>
+                    <h4 className="text-xl font-semibold text-[#063F32]">A reflection, not a score.</h4>
+                    <p className="mt-3 text-base leading-relaxed text-[#52645D]">You completed one demo feedback loop. Progress can include learning that a step needs to be smaller.</p>
+                    <div className="mt-5 rounded-xl bg-[#EDF4EC] p-4" data-testid="feedback-next-step">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-[.08em] text-[#08754D]">An optional next suggestion</p>
+                      <p className="text-base leading-relaxed text-[#063F32]">{nextSuggestion.activity}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-[#52645D]">{nextSuggestion.reason}</p>
+                    </div>
+                    <button type="button" className="button mt-5 w-full justify-center" onClick={tryNextStep}>Explore next sample step <ArrowRight size={16} /></button>
+                    <button type="button" className="mt-2 min-h-11 w-full text-sm font-semibold text-[#52645D]" onClick={stop}>Finish for now</button>
+                  </div>
+                ) : (
+                  <>
+                    {stage !== 'reflection' ? (
+                      <div className="mt-6 rounded-2xl border border-[#DCE5DB] bg-white p-5">
+                        <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[.08em] text-[#08754D]"><Compass size={15} /> {stage === 'practice' ? 'Your voluntary practice' : 'Your proposed first step'}</p>
+                        <p className="min-h-[72px] text-lg font-medium leading-relaxed text-[#063F32]" data-testid="practice-suggestion">{suggestion}</p>
+                        <p className="mt-4 border-t border-[#DCE5DB] pt-4 text-sm leading-relaxed text-[#52645D]"><strong className="text-[#063F32]">Why this step? </strong>{suggestionReason}</p>
+                        {stage === 'ready' ? (
+                          <div className="mt-5">
+                            <RangeField id="practice-difficulty" label="Make it fit your comfort" value={practiceDifficulty} onChange={setPracticeDifficulty} />
+                            <button type="button" className="button button-secondary mt-4 w-full justify-center" onClick={adapt}>Adapt the difficulty <Sparkles size={16} /></button>
+                            <button type="button" className="button mt-3 w-full justify-center" onClick={() => setStage('practice')}>Choose this practice <ArrowRight size={16} /></button>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="mt-5 rounded-xl bg-[#FFF8E7] p-4 text-sm leading-relaxed text-[#6E5313]">{result.category.preparation} You can rehearse the interaction or imagine a fictional example. No real-world action is required.</p>
+                            <button type="button" className="button mt-5 w-full justify-center" onClick={() => setStage('reflection')}>Continue to reflection <ArrowRight size={16} /></button>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <form className="mt-6 rounded-2xl border border-[#DCE5DB] bg-white p-5" onSubmit={completeReflection} aria-label="Practice reflection">
+                        <h4 className="mb-2 text-xl font-semibold text-[#063F32]">What did you notice?</h4>
+                        <p className="mb-5 text-sm leading-relaxed text-[#52645D]">You can use fictional feedback. These inputs show how a next suggestion might adapt.</p>
+                        <div className="space-y-5">
+                          <RangeField id="reflection-difficulty" label="Difficulty after the sample" value={after} onChange={setAfter} />
+                          <RangeField id="reflection-confidence" label="Confidence for a similar step" value={confidence} onChange={setConfidence} low="Not confident" high="Very confident" />
+                          <div><label className="field-label" htmlFor="reflection-experience">How did the step feel?</label><select id="reflection-experience" className="field" value={experience} onChange={(event) => setExperience(event.target.value as SessionCheckIn['experience'])}><option>Manageable</option><option>Mixed</option><option>Too much</option></select></div>
+                          <div><label className="field-label" htmlFor="journey-reflection">One thing you learned <span className="font-normal">(optional)</span></label><textarea id="journey-reflection" className="field min-h-24 resize-y" rows={3} maxLength={240} value={reflection} onChange={(event) => setReflection(event.target.value)} placeholder="e.g. A shorter first step felt more manageable." aria-describedby="reflection-privacy" /><p id="reflection-privacy" className="mt-2 text-xs leading-relaxed text-[#52645D]">Leave out personal or medical details. This note is discarded when you complete the reflection.</p></div>
+                        </div>
+                        <button type="submit" className="button mt-5 w-full justify-center">Complete reflection <Check size={17} /></button>
+                      </form>
+                    )}
+                    {active && <div className="mt-3 grid grid-cols-2 gap-2"><button type="button" className="button button-secondary w-full justify-center" onClick={pause}><Pause size={15} /> Pause</button><button type="button" className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#DCE5DB] bg-white px-3 py-3 text-sm font-semibold text-[#52645D]" onClick={stop}><Square size={14} /> Stop practice</button></div>}
+                  </>
+                )}
+                <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-[#52645D]"><HeartHandshake size={16} className="mt-0.5 shrink-0 text-[#08754D]" />{result.category.limitation} This is not an assessment or treatment plan.</p>
+              </>
+            ) : <JourneyEmptyState />}
+          </div>
+        </div>
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[#D0DDCE] bg-white/70 p-5">
+          <ShieldCheck size={20} className="mt-0.5 text-[#063F32]" />
+          <p className="text-sm leading-relaxed text-[#52645D]"><strong className="text-[#063F32]">Your care comes first. </strong>This educational prototype uses predefined templates and a limited keyword check. It cannot assess individual suitability or risk, diagnose, provide crisis counseling, or replace professional care. For immediate danger, contact local emergency services or an appropriate crisis service.</p>
         </div>
       </div>
-      <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-relaxed text-[#607067]">Educational prototype with predefined local templates and a limited keyword safety check. It cannot determine individual suitability, assess risk, or replace professional guidance.</p>
+    </section>
+  );
+}
+
+function JourneyProgress({ stage }: { stage: JourneyStage }) {
+  const current = stage === 'empty' ? 0 : stage === 'ready' ? 1 : stage === 'practice' ? 2 : stage === 'reflection' ? 3 : stage === 'complete' ? 4 : -1;
+  return (
+    <ol className="grid grid-cols-5 gap-1" aria-label="Demo journey progress">
+      {['Goal', 'Step', 'Practice', 'Reflect', 'Learn'].map((label, index) => (
+        <li key={label} className="text-center" aria-current={current === index ? 'step' : undefined}>
+          <span className={`mb-2 block h-1.5 rounded-full ${index <= current ? 'bg-[#08754D]' : 'bg-[#DCE5DB]'}`} />
+          <span className={`text-xs ${index === current ? 'font-semibold text-[#063F32]' : 'text-[#52645D]'}`}>{label}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function JourneyEmptyState() {
+  return (
+    <div className="flex min-h-[650px] flex-col items-center justify-center text-center">
+      <div className="mb-8 flex h-32 w-32 items-center justify-center rounded-full border border-[#DCE5DB]">
+        <span className="flex h-24 w-24 items-center justify-center rounded-full bg-[#EDF4EC] text-[#063F32]"><Feather size={38} strokeWidth={1.2} /></span>
+      </div>
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[.12em] text-[#08754D]">Room for a smaller beginning</p>
+      <h3 className="max-w-sm text-3xl font-semibold leading-tight tracking-tight text-[#063F32]">Your pace.<br />Your next possible step.</h3>
+      <p className="mt-5 max-w-sm text-base leading-relaxed text-[#52645D]">Choose an example or enter a fictional goal. Your suggestion, practice, and reflection will unfold here.</p>
+      <span className="mt-7 inline-flex items-center gap-2 text-sm text-[#52645D]"><LockKeyhole size={15} /> No account. No live AI. No saved data.</span>
     </div>
-  </section>;
+  );
+}
+
+function SafetyBoundary() {
+  return (
+    <div className="mt-5 min-h-[600px] rounded-2xl border border-[#E5BDB2] bg-[#FFF3EE] p-5" role="alert">
+      <ShieldCheck size={28} className="mb-5 text-[#8A3223]" />
+      <h3 className="mb-4 text-2xl font-semibold text-[#8A3223]">This needs support beyond a demo.</h3>
+      <p className="text-base leading-relaxed text-[#8A3223]">{crisisMessage}</p>
+      <p className="mt-4 text-sm leading-relaxed text-[#80554B]">Practice has stopped. No journey or reflection is generated from this text. The prototype cannot assess risk or provide crisis counseling.</p>
+    </div>
+  );
 }
 
 export function SampleJourney() {
@@ -110,23 +454,70 @@ export function SampleJourney() {
   const [completed, setCompleted] = useState<number[]>([0]);
   const current = speakingJourney[active];
   const complete = completed.includes(active);
-  function select(index: number) { setActive(index); }
-  function toggle() { setCompleted((items) => items.includes(active) ? items.filter((item) => item !== active) : [...items, active]); }
 
-  return <section className="section scroll-mt-28 bg-white" id="sample-journey" aria-labelledby="sample-title">
-    <div className="container">
-      <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div className="max-w-xl"><p className="eyebrow"><Compass size={14} /> The journey, made tangible</p><h2 id="sample-title" className="section-heading">Confidence has<br />more than one step.</h2></div><p className="max-w-sm text-sm leading-relaxed text-[#607067]">Explore an illustrative public-speaking journey. The order and activities are examples; individual suitability needs qualified review.</p></div>
-      <div className="grid overflow-hidden rounded-[26px] border border-[#DDE9E1] lg:grid-cols-[.85fr_1.15fr]">
-        <div className="bg-[#F4F8F0] p-5 sm:p-7"><div className="mb-6 flex items-center justify-between"><h3 className="text-sm font-semibold text-[#0B3D2E]">Finding your voice</h3><span className="text-xs text-[#607067]">{completed.length} / 5 demo steps</span></div><div role="tablist" aria-label="Illustrative public-speaking steps" aria-orientation="vertical" className="space-y-2">{speakingJourney.map((step, index) => <button key={step.title} id={`sample-step-${index}`} role="tab" type="button" aria-selected={active === index} aria-controls="sample-step-panel" tabIndex={active === index ? 0 : -1} onClick={() => select(index)} onKeyDown={(event) => { if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') { event.preventDefault(); const next = event.key === 'Home' ? 0 : event.key === 'End' ? 4 : (index + (event.key === 'ArrowDown' ? 1 : -1) + 5) % 5; select(next); document.getElementById(`sample-step-${next}`)?.focus(); } }} className={`flex w-full items-center gap-3 rounded-xl border p-3.5 text-left transition-colors ${active === index ? 'border-[#DDE9E1] bg-white shadow-sm' : 'border-transparent hover:bg-white/60'}`}><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${completed.includes(index) ? 'bg-[#0B3D2E] text-white' : active === index ? 'bg-[#FFF4C7] text-[#0B3D2E]' : 'border border-[#D4E0CD] text-[#607067]'}`}>{completed.includes(index) ? <Check size={15} /> : String(index + 1).padStart(2, '0')}</span><span className={`flex-1 text-sm font-medium ${active === index ? 'text-[#0B3D2E]' : 'text-[#607067]'}`}>{step.title}</span>{active === index && <ChevronRight size={16} className="shrink-0 text-[#08764E]" />}</button>)}</div><p className="mt-6 flex items-start gap-2 text-[11px] leading-relaxed text-[#607067]"><ShieldCheck size={15} className="mt-0.5 shrink-0" />All completion and confidence values are illustrative. Your clicks change this demo only.</p></div>
-        <div id="sample-step-panel" role="tabpanel" aria-labelledby={`sample-step-${active}`} tabIndex={0} className="bg-white p-6 sm:p-9">
-          <div className="mb-5 flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase tracking-[.18em] text-[#08764E]">Step {active + 1} · Illustrative activity</span><span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${complete ? 'bg-[#E8F5ED] text-[#0B3D2E]' : 'bg-[#F4F7F1] text-[#607067]'}`}>{complete ? <CheckCircle2 size={12} /> : <Circle size={11} />}{complete ? 'Demo completed' : 'Ready to explore'}</span></div>
-          <h3 className="mb-6 text-2xl font-semibold tracking-tight text-[#0B3D2E]">{current.title}</h3>
-          <div className="space-y-5">{[{ label: 'Prepare', text: current.preparation, Icon: Leaf }, { label: 'Practice', text: current.activity, Icon: Compass }, { label: 'Reflect', text: current.reflection, Icon: Lightbulb }].map(({ label, text, Icon }) => <div key={label} className="flex gap-3"><span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F2F7EE] text-[#08764E]"><Icon size={15} /></span><div><h4 className="mb-1 text-xs font-semibold text-[#14241D]">{label}</h4><p className="text-sm leading-relaxed text-[#607067]">{text}</p></div></div>)}</div>
-          <div className="mt-7 grid grid-cols-2 gap-4 border-t border-[#E9EFE5] pt-5"><div><p className="mb-2 text-[10px] text-[#607067]">Example self-reported difficulty</p><div className="flex items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#EEF2E9]"><span className="block h-full rounded-full bg-[#D9B74D]" style={{ width: `${current.difficulty * 10}%` }} /></span><span className="text-xs font-semibold text-[#14241D]">{current.difficulty}/10</span></div></div><div><p className="mb-2 text-[10px] text-[#607067]">Example confidence</p><div className="flex items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#EEF2E9]"><span className="block h-full rounded-full bg-[#13A36D]" style={{ width: `${current.confidence * 10}%` }} /></span><span className="text-xs font-semibold text-[#14241D]">{current.confidence}/10</span></div></div></div>
-          <button type="button" onClick={toggle} className="button button-secondary mt-6 w-full justify-center" aria-pressed={complete}>{complete ? <RotateCcw size={15} /> : <CheckCheck size={16} />}{complete ? 'Undo demo completion' : 'Mark demo step complete'}</button>
-          <p className="mt-3 text-center text-[10px] text-[#607067]">Clicking records no real activity and sends no data.</p>
+  function toggleCompletion() {
+    setCompleted((items) => items.includes(active) ? items.filter((item) => item !== active) : [...items, active]);
+  }
+
+  return (
+    <section className="section scroll-mt-28 bg-white" id="sample-journey" aria-labelledby="sample-title">
+      <div className="container">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
+          <div><p className="eyebrow">An illustrative pathway</p><h2 id="sample-title" className="section-heading">Confidence has<br />more than one step.</h2></div>
+          <p className="max-w-xl text-base leading-relaxed text-[#52645D]">Explore a public-speaking example. The sequence and ratings are illustrative; individual suitability needs qualified review.</p>
+        </div>
+        <div className="grid overflow-hidden rounded-[26px] border border-[#DCE5DB] lg:grid-cols-[.85fr_1.15fr]">
+          <div className="bg-[#EDF4EC] p-5 sm:p-7">
+            <div className="mb-6 flex items-center justify-between gap-3"><h3 className="text-lg font-semibold text-[#063F32]">Finding your voice</h3><span className="text-xs text-[#52645D]">{completed.length} / 5 demo steps</span></div>
+            <div role="tablist" aria-label="Illustrative public-speaking steps" aria-orientation="vertical" className="space-y-2">
+              {speakingJourney.map((step, index) => (
+                <button
+                  key={step.title} id={`sample-step-${index}`} role="tab" type="button"
+                  aria-selected={active === index} aria-controls="sample-step-panel" tabIndex={active === index ? 0 : -1}
+                  onClick={() => setActive(index)}
+                  onKeyDown={(event) => {
+                    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+                    event.preventDefault();
+                    const next = event.key === 'Home' ? 0 : event.key === 'End' ? 4 : (index + (event.key === 'ArrowDown' ? 1 : -1) + 5) % 5;
+                    setActive(next); document.getElementById(`sample-step-${next}`)?.focus();
+                  }}
+                  className={`flex min-h-16 w-full items-center gap-3 rounded-xl border p-3.5 text-left ${active === index ? 'border-[#DCE5DB] bg-white shadow-sm' : 'border-transparent hover:bg-white/60'}`}
+                >
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${completed.includes(index) ? 'bg-[#063F32] text-white' : active === index ? 'bg-[#E8B93F] text-[#063F32]' : 'border border-[#C5D5C2] text-[#52645D]'}`}>
+                    {completed.includes(index) ? <Check size={16} /> : String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className={`flex-1 text-base font-medium ${active === index ? 'text-[#063F32]' : 'text-[#52645D]'}`}>{step.title}</span>
+                  {active === index && <ChevronRight size={17} className="text-[#08754D]" />}
+                </button>
+              ))}
+            </div>
+            <p className="mt-6 flex items-start gap-2 text-xs leading-relaxed text-[#52645D]"><ShieldCheck size={16} className="mt-0.5" />Completion and confidence values here are illustrative. Clicks only change this example.</p>
+          </div>
+          <div id="sample-step-panel" role="tabpanel" aria-labelledby={`sample-step-${active}`} tabIndex={0} className="min-h-[640px] bg-white p-5 sm:p-8">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[.1em] text-[#08754D]">Step {active + 1} · Illustrative activity</span>
+              <span className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${complete ? 'bg-[#EDF4EC] text-[#063F32]' : 'bg-[#F7F8F2] text-[#52645D]'}`}>
+                {complete ? <CheckCircle2 size={14} /> : <Circle size={13} />}{complete ? 'Demo completed' : 'Ready to explore'}
+              </span>
+            </div>
+            <h3 className="mb-6 text-2xl font-semibold tracking-tight text-[#063F32]">{current.title}</h3>
+            <div className="min-h-[310px] space-y-5">
+              {[{ label: 'Prepare', text: current.preparation, Icon: Leaf }, { label: 'Practice', text: current.activity, Icon: Compass }, { label: 'Reflect', text: current.reflection, Icon: Lightbulb }].map(({ label, text, Icon }) => (
+                <div key={label} className="flex gap-3"><span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EDF4EC] text-[#08754D]"><Icon size={17} /></span><div><h4 className="mb-1 text-sm font-semibold text-[#10251F]">{label}</h4><p className="text-base leading-relaxed text-[#52645D]">{text}</p></div></div>
+              ))}
+            </div>
+            <div className="mt-6 grid gap-4 border-t border-[#DCE5DB] pt-5 sm:grid-cols-2">
+              {[{ label: 'Example difficulty', value: current.difficulty, color: '#A17B14' }, { label: 'Example confidence', value: current.confidence, color: '#08754D' }].map((metric) => (
+                <div key={metric.label}><p className="mb-2 text-xs text-[#52645D]">{metric.label}</p><div className="flex items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#EDF4EC]"><span className="block h-full rounded-full" style={{ width: `${metric.value * 10}%`, backgroundColor: metric.color }} /></span><span className="text-sm font-semibold text-[#10251F]">{metric.value}/10</span></div></div>
+              ))}
+            </div>
+            <button type="button" onClick={toggleCompletion} className="button button-secondary mt-6 w-full justify-center" aria-pressed={complete}>
+              {complete ? <RotateCcw size={16} /> : <CheckCheck size={17} />}{complete ? 'Undo demo completion' : 'Mark demo step complete'}
+            </button>
+            <p className="mt-3 text-center text-xs text-[#52645D]">No real activity is recorded and no data leaves this page.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </section>;
+    </section>
+  );
 }

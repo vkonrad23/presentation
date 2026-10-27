@@ -3,15 +3,17 @@ export type DashboardRange = 7 | 30 | 90;
 export interface DashboardPoint {
   label: string;
   confidence: number;
-  consistency: number;
 }
 
 export interface DashboardPeriod {
   completion: number;
   completed: number;
   assigned: number;
-  weeklyPractice: string;
+  exerciseAdherence: number;
   confidence: string;
+  difficulty: string;
+  safetyEscalations: number;
+  retention: number;
   reflections: number;
   dropoff: string;
   dropoffNote: string;
@@ -24,57 +26,66 @@ export const dashboardPeriods: Record<DashboardRange, DashboardPeriod> = {
     completion: 60,
     completed: 3,
     assigned: 5,
-    weeklyPractice: '3 of 7 days',
+    exerciseAdherence: 64,
     confidence: '4.8 / 10',
+    difficulty: '6 → 5',
+    safetyEscalations: 2,
+    retention: 58,
     reflections: 4,
     dropoff: 'Before first practice',
     dropoffNote: 'A prompt to make the first step smaller could be explored.',
     points: [
-      { label: 'Day 1', confidence: 3, consistency: 1 },
-      { label: 'Day 2', confidence: 3.5, consistency: 2 },
-      { label: 'Day 3', confidence: 3.3, consistency: 1 },
-      { label: 'Day 4', confidence: 4.1, consistency: 3 },
-      { label: 'Day 5', confidence: 3.8, consistency: 2 },
-      { label: 'Day 6', confidence: 4.4, consistency: 4 },
-      { label: 'Day 7', confidence: 4.8, consistency: 3 },
+      { label: 'Day 1', confidence: 3 },
+      { label: 'Day 2', confidence: 3.5 },
+      { label: 'Day 3', confidence: 3.3 },
+      { label: 'Day 4', confidence: 4.1 },
+      { label: 'Day 5', confidence: 3.8 },
+      { label: 'Day 6', confidence: 4.4 },
+      { label: 'Day 7', confidence: 4.8 },
     ],
   },
   30: {
     completion: 70,
     completed: 14,
     assigned: 20,
-    weeklyPractice: '4 of 7 days',
+    exerciseAdherence: 72,
     confidence: '6.2 / 10',
+    difficulty: '6 → 4',
+    safetyEscalations: 5,
+    retention: 46,
     reflections: 18,
     dropoff: 'After a harder step',
     dropoffNote: 'A gentler pace and an optional pause could be explored.',
     points: [
-      { label: 'Day 1', confidence: 3, consistency: 2 },
-      { label: 'Day 5', confidence: 3.8, consistency: 3 },
-      { label: 'Day 10', confidence: 4.5, consistency: 4 },
-      { label: 'Day 15', confidence: 4.1, consistency: 3 },
-      { label: 'Day 20', confidence: 5.2, consistency: 4 },
-      { label: 'Day 25', confidence: 5.8, consistency: 5 },
-      { label: 'Day 30', confidence: 6.2, consistency: 4 },
+      { label: 'Day 1', confidence: 3 },
+      { label: 'Day 5', confidence: 3.8 },
+      { label: 'Day 10', confidence: 4.5 },
+      { label: 'Day 15', confidence: 4.1 },
+      { label: 'Day 20', confidence: 5.2 },
+      { label: 'Day 25', confidence: 5.8 },
+      { label: 'Day 30', confidence: 6.2 },
     ],
   },
   90: {
     completion: 75,
     completed: 45,
     assigned: 60,
-    weeklyPractice: '5 of 7 days',
+    exerciseAdherence: 76,
     confidence: '6.8 / 10',
+    difficulty: '6 → 3',
+    safetyEscalations: 11,
+    retention: 35,
     reflections: 52,
     dropoff: 'Returning after a break',
     dropoffNote: 'A flexible restart pathway could be explored.',
     points: [
-      { label: 'Day 1', confidence: 3, consistency: 2 },
-      { label: 'Day 15', confidence: 4.1, consistency: 3 },
-      { label: 'Day 30', confidence: 6.2, consistency: 4 },
-      { label: 'Day 45', confidence: 5.5, consistency: 3 },
-      { label: 'Day 60', confidence: 6.4, consistency: 5 },
-      { label: 'Day 75', confidence: 6.1, consistency: 4 },
-      { label: 'Day 90', confidence: 6.8, consistency: 5 },
+      { label: 'Day 1', confidence: 3 },
+      { label: 'Day 15', confidence: 4.1 },
+      { label: 'Day 30', confidence: 6.2 },
+      { label: 'Day 45', confidence: 5.5 },
+      { label: 'Day 60', confidence: 6.4 },
+      { label: 'Day 75', confidence: 6.1 },
+      { label: 'Day 90', confidence: 6.8 },
     ],
   },
 };

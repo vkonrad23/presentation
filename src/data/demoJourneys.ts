@@ -1,5 +1,54 @@
 export type FearCategory = 'social' | 'speaking' | 'travel' | 'animals' | 'medical' | 'work' | 'avoidance';
 export type JourneyPace = 'Gentle' | 'Balanced' | 'Challenging';
+export type DemoScenarioKey = 'speaking' | 'social' | 'conversation';
+
+export interface DemoScenario {
+  value: DemoScenarioKey;
+  label: string;
+  category: FearCategory;
+  preparation: string;
+  activities: [string, string, string];
+  limitation: string;
+}
+
+export const demoScenarios: DemoScenario[] = [
+  {
+    value: 'speaking',
+    label: 'Speaking confidently in a small group',
+    category: 'speaking',
+    preparation: 'Choose a familiar topic and a comfortable place to rehearse privately.',
+    activities: [
+      'Write one sentence you might like to share with a small group.',
+      'Rehearse your sentence privately, with no audience and no need to record.',
+      'If suitable, ask one trusted person to listen to your sentence. Sharing is optional.',
+    ],
+    limitation: 'An illustrative communication exercise, not an individualized exposure treatment.',
+  },
+  {
+    value: 'social',
+    label: 'Entering an unfamiliar social environment',
+    category: 'social',
+    preparation: 'Think of a low-stakes, voluntary setting. You do not need to visit it for this sample.',
+    activities: [
+      'Write one question you could ask about a new social setting.',
+      'Practice a brief introduction privately or imagine arriving with a trusted person.',
+      'If appropriate, plan a short visit with support and an easy option to leave.',
+    ],
+    limitation: 'Choose only safe settings. You decide whether to attend, pause, or leave.',
+  },
+  {
+    value: 'conversation',
+    label: 'Preparing for a difficult conversation',
+    category: 'work',
+    preparation: 'Choose a routine, low-stakes topic. This sample is not for unsafe relationships or confrontation.',
+    activities: [
+      'Privately write the one point you want to communicate, without sending it.',
+      'Rehearse a calm opening sentence privately and note one boundary that matters to you.',
+      'If useful, rehearse with a trusted person before deciding whether a conversation is appropriate.',
+    ],
+    limitation: 'Do not use this sample to approach an unsafe person. Seek appropriate professional support for safety concerns.',
+  },
+];
 
 export interface JourneyStep {
   title: string;
@@ -76,14 +125,19 @@ export interface GeneratedJourney {
   pace: JourneyPace;
   steps: string[];
   guidance: string;
+  scenario?: DemoScenarioKey;
 }
 
-export function buildJourney(goal: string, category: FearCategory, difficulty: number, pace: JourneyPace): GeneratedJourney {
-  const template = categories.find((item) => item.value === category) ?? categories[0];
+export function buildJourney(goal: string, category: FearCategory, difficulty: number, pace: JourneyPace, scenario?: DemoScenarioKey): GeneratedJourney {
+  const baseTemplate = categories.find((item) => item.value === category) ?? categories[0];
+  const selectedScenario = demoScenarios.find((item) => item.value === scenario);
+  const template = selectedScenario
+    ? { ...baseTemplate, preparation: selectedScenario.preparation, activities: selectedScenario.activities, limitation: selectedScenario.limitation }
+    : baseTemplate;
   const extraPreparation = difficulty >= 8;
   const gentle = pace === 'Gentle' || extraPreparation;
   return {
-    goal: goal.trim(), category: template, difficulty, pace,
+    goal: goal.trim(), category: template, difficulty, pace, scenario,
     steps: gentle
       ? [template.activities[0], 'Pause and notice what feels manageable. Choose a time and support that work for you.', template.activities[1]]
       : [...template.activities],
@@ -94,6 +148,59 @@ export function buildJourney(goal: string, category: FearCategory, difficulty: n
         : pace === 'Challenging'
           ? 'Challenging means more structure, not more risk. The same voluntary, low-stakes limits apply, and you can step back at any time.'
           : 'A balanced starting point: prepare, practice privately, then consider a small voluntary action.',
+  };
+}
+
+export function getHeroRecommendation(scenario: DemoScenarioKey, difficulty: number) {
+  const selected = demoScenarios.find((item) => item.value === scenario) ?? demoScenarios[0];
+  if (difficulty >= 8) {
+    return {
+      title: 'Preparation is progress, too.',
+      activity: selected.activities[0],
+      reason: 'At 8–10, this prototype stays with private preparation. Consider qualified support before a challenge.',
+      preparation: 'Pause first. Notice your surroundings at a pace that feels comfortable.',
+    };
+  }
+  if (difficulty >= 5) {
+    return {
+      title: 'Make the next step smaller.',
+      activity: selected.activities[0],
+      reason: 'At 5–7, a short private draft keeps this sample low-pressure and easy to pause.',
+      preparation: 'Take a moment to settle. You can stop or choose another goal at any time.',
+    };
+  }
+  return {
+    title: 'A little room to begin.',
+    activity: selected.activities[1],
+    reason: 'At 0–4, this sample offers a private rehearsal. A lower rating does not establish suitability.',
+    preparation: 'Choose a comfortable, familiar space. There is no requirement to share anything.',
+  };
+}
+
+export interface SessionCheckIn {
+  id: number;
+  before: number;
+  after: number;
+  confidence: number;
+  experience: 'Manageable' | 'Mixed' | 'Too much';
+}
+
+export function nextStepFromFeedback(journey: GeneratedJourney, checkIn: SessionCheckIn) {
+  if (checkIn.after >= 8 || checkIn.experience === 'Too much') {
+    return {
+      activity: 'Pause the challenge. Keep any next step to private reflection, and consider qualified professional support.',
+      reason: 'Your feedback suggests more support or a smaller starting point may be appropriate. This demo cannot assess individual risk.',
+    };
+  }
+  if (checkIn.after > checkIn.before || checkIn.confidence <= 3 || checkIn.experience === 'Mixed') {
+    return {
+      activity: journey.steps[0],
+      reason: 'Based on your feedback, the sample returns to preparation. Repeating, pausing, or stopping are all valid choices.',
+    };
+  }
+  return {
+    activity: journey.steps[Math.min(1, journey.steps.length - 1)],
+    reason: 'You marked this step as manageable. You can repeat it or consider this optional preparation step; progression is always your choice.',
   };
 }
 

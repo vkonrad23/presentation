@@ -1,6 +1,6 @@
 # FearlessU accelerator presentation
 
-A responsive, interactive presentation for **FearlessU**, an early-stage wellness technology concept exploring AI-assisted, CBT-informed fear journeys. Built with React, TypeScript, Vite, Tailwind CSS, and Lucide React icons. This is an accelerator application prototype, with deterministic demonstrations and illustrative product data.
+A responsive, interactive presentation for **FearlessU**, an early-stage wellness technology concept exploring AI-assisted, evidence-informed fear journeys. Built with React, TypeScript, Vite, Tailwind CSS, and Lucide React icons. The editorial layout uses forest green, warm ivory, sage, and restrained gold, with system fonts and original SVG assets. This is an accelerator application prototype, with deterministic demonstrations and clearly labeled illustrative data.
 
 The React project at the repository root is the current deliverable. `FearlessU_Presentation_Website/` preserves the original standalone HTML website for reference.
 
@@ -51,19 +51,20 @@ FearlessU_Presentation_Website/
                        Preserved original static website
 ```
 
-Edit shared copy and illustrative datasets in `src/data/`, and section-specific presentation or behavior in `src/components/`. Update the root `index.html` metadata before public deployment.
+Edit shared copy and illustrative datasets in `src/data/`, and section-specific presentation or behavior in `src/components/`. The single-page presentation uses section anchors rather than a routing service. Update the root `index.html` metadata before public deployment, including a real deployment URL for social preview metadata when available.
 
 ## Interactive features
 
-- Responsive navigation, section links, active navigation feedback, accessible controls, and reduced-motion styling.
-- An anxiety slider and an adaptive hero recommendation generated with local rules.
-- A fear-journey builder using predefined category templates, difficulty, and pacing choices.
-- A basic crisis-language guard that shows urgent-support guidance instead of generating a journey when a recognized risk phrase is entered.
-- Selectable sample-journey steps with preparation, activity, and reflection details.
-- An impact dashboard with local 7-, 30-, and 90-day filters and clearly labeled simulated data.
+- Sticky navigation, active section feedback, a mobile menu, visible keyboard focus, and reduced-motion support.
+- Three example scenarios: speaking in a small group, entering an unfamiliar social environment, and preparing for a difficult conversation. The hero uses a native scenario selector, an anxiety slider, explainable local recommendations, and pause/resume controls.
+- A complete local journey loop: choose an example or fictional goal, set difficulty and pace, generate a sample, adapt its difficulty, choose a voluntary practice, and complete a reflection.
+- Reflection sliders and an experience selector shape an optional next suggestion. A temporary session summary shows the visitor's numeric demo check-ins; the optional written note is discarded on completion. Pause preserves the current stage, stop ends the practice, and clear resets the session.
+- A limited phrase-based crisis guard checks submitted goals and reflection notes, stops the sample when a recognized phrase appears, and shows urgent-support guidance. It does not assess risk or provide crisis counseling.
+- Keyboard-accessible public-speaking sample tabs with preparation, activity, reflection, illustrative ratings, and reversible demo completion.
+- An impact dashboard with local 7-, 30-, and 90-day filters. Its illustrative metrics are separate from the visitor's temporary session check-ins and are not clinical evidence or actual traction.
 - A 60-second pitch timer with pause, reset, and teleprompter controls.
 - A downloadable one-page summary and print styling for saving a copy as PDF through the browser.
-- FAQ controls, a privacy explanation, and a contact form with local validation and demo-only feedback.
+- FAQ accordions, draft privacy and prototype-terms dialogs, and a contact form with local validation, clear controls, and demo-only feedback. The form does not contact the founder.
 
 No backend, live AI model, API key, database, authentication service, or persistent application storage is required. Form and journey entries remain temporary local draft state; they are not submitted to a server or saved in `localStorage`. Reloading the page resets this state. Use invented examples only and do not enter sensitive mental-health or identifying information. A locally generated download is a file the user chooses to retain.
 
@@ -86,7 +87,9 @@ FearlessU is an early-stage wellness technology concept. It is not a medical dev
 
 The basic phrase-based crisis guard is incomplete and can miss or misinterpret language. It is not a clinical screening, monitoring, or emergency-response system. The website cannot assess a person's safety or provide crisis counseling. If someone may be in immediate danger or at risk of harming themselves or another person, they should contact local emergency services or an appropriate crisis service immediately.
 
-Clinical content review, suitability screening, continuous risk evaluation, escalation workflows, auditability, production encryption, role-based access, consent management, data retention, export/deletion, and security review are **planned production requirements**, not implemented or validated protections. No HIPAA compliance or other certification is claimed. The privacy section describes the prototype's behavior and proposed principles; it is not a final production privacy policy.
+The responsibility section distinguishes **Implemented prototype** (limited local controls), **In development** (educational interface refinement), and **Planned validation** (proposed production controls and research). Clinical content review, age and suitability screening, continuous risk evaluation, staffed escalation workflows, auditability, production encryption, role-based access, consent management, data retention, export/deletion, and security review are **planned production requirements**, not implemented or validated protections. No HIPAA compliance or other certification is claimed. The privacy and terms dialogs are draft principles, not final production legal policies.
+
+The three proposed evidence phases cover usability and safety review, feasibility and protocol design, and controlled evaluation. Research, subgroup and bias analysis, health-economic assessment, and publication are plans rather than completed findings.
 
 ## Connect a future backend or AI service
 
@@ -102,4 +105,22 @@ The deliverable is `fearlessu-accelerator-website.zip`, containing project sourc
 
 The packaged ZIP also includes `preview.html`, a self-contained snapshot with the production JavaScript and CSS embedded. Open that downloaded file in a regular browser for a quick interactive preview without installing anything. Edit the React source and rebuild to develop the application; the preview is a generated copy.
 
-The production build passed strict TypeScript checks and browser checks covering the journey templates, local adaptation, recognized crisis-language handling, sample tabs, dashboard filters, full timer countdown, teleprompter, contact validation, privacy dialog, summary download, and print action. Responsive layouts were checked at 320, 375, 768, 1024, and 1440 px without page overflow. These checks validate the demonstration, not clinical suitability or effectiveness.
+Rebuild and regenerate the packaged snapshots after source changes so the ZIP, embedded preview, and `dist/` represent the same version. Generated archives, build output, and `node_modules/` are intentionally excluded from Git.
+
+## Validate changes
+
+Run `npm run build` for strict TypeScript and production-bundle checks, then use `npm run preview` for browser review. The project currently provides development, build, and preview scripts; it does not configure a separate test or lint command.
+
+Review the following after changing a component or design token:
+
+- Layouts at **320, 375, 768, 1024, 1440, and 1920 px**, including horizontal overflow, readable body text, wrapping controls, consistent spacing, and approximately 44 px touch targets.
+- All three scenarios, empty/invalid goals, local difficulty adaptation, the practice/reflection loop, feedback rationale, pause/resume, stop, and clear. Submit a recognized crisis phrase in both the goal and the optional reflection to verify that the sample stops.
+- Keyboard navigation, visible focus, sample-tab Arrow/Home/End keys, native scenario selection, accordions, privacy/terms dialog close and Escape behavior, and reduced-motion preferences.
+- All dashboard ranges, timer start/pause/resume/reset and completion, teleprompter controls, contact validation/success/clear, summary download, and Print / Save as PDF.
+- Browser console errors, unintended network submissions, and unexpected local/session storage. Application inputs should remain in page memory only; ordinary development asset and hot-reload requests are separate from form submission.
+
+Interface checks do not establish clinical suitability, safety, effectiveness, or full accessibility conformance. Any reported validation results should state which commands, interactions, and viewport widths were actually checked for that version.
+
+## Redesign validation
+
+The production build passed TypeScript checking. Chromium checks passed for the three scenarios, all seven category templates, difficulty adaptation, two practice/reflection loops, memory-only history, pause/stop/reset, recognized goal and reflection risk language, keyboard journey tabs, all dashboard date filters, contact validation, legal dialogs, local downloads/printing, and pitch countdown/teleprompter controls. Layout checks at 320, 375, 768, 1024, 1440, and 1920 px found no page overflow or visible text below 12 px; visible controls met the 44 px target check. Automated WCAG A/AA checks at mobile and desktop reported no violations. This is prototype interface validation, not a clinical or complete manual accessibility evaluation.

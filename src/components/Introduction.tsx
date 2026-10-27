@@ -11,7 +11,7 @@ export function Hero() {
       <div className="container hero-grid">
         <div className="hero-copy">
           <p className="hero-badge"><span className="status-dot" /> Generative AI for mental health</p>
-          <h1 id="hero-title">Face fear,<br />one <em>manageable</em><br />step at a time.</h1>
+          <h1 id="hero-title" className="hero-heading"><span className="hero-title-line">Face fear,</span>{' '}<span className="hero-title-line">one <em>manageable</em></span>{' '}<span className="hero-title-line">step at a time.</span></h1>
           <p className="hero-description">FearlessU is an early-stage mental health AI startup exploring personalized CBT-informed support and responsibly evaluated research into new intervention ideas.</p>
           <div className="hero-actions">
             <a className="button" href="#journey">Explore the fear journey <ArrowUpRight size={19} aria-hidden="true" /></a>
@@ -23,7 +23,7 @@ export function Hero() {
         <div className="hero-product">
           <svg className="hero-path" viewBox="0 0 670 780" fill="none" aria-hidden="true">
             <path d="M21 187C111 35 515-2 616 192c100 192-64 506-272 525C131 736 15 622 22 447" stroke="currentColor" strokeWidth="1" strokeDasharray="3 7" />
-            <path d="M3 247C58 72 409-31 597 114" stroke="currentColor" strokeWidth="1" />
+            <path className="hero-route" pathLength="1" d="M3 247C58 72 409-31 597 114" stroke="currentColor" strokeWidth="1" />
             <circle cx="597" cy="114" r="6" fill="#E8B93F" stroke="none" />
             <circle cx="22" cy="447" r="4" fill="#063F32" stroke="none" />
           </svg>

@@ -40,6 +40,8 @@ For repeatable dependency installation from the included lockfile, use `npm ci` 
 src/
   components/          Page sections and interactive product demonstrations
   data/                Editable presentation content and demo templates
+  hooks/               Shared reveal, content, and section-navigation behavior
+  styles/              Motion, hero entrance, navigation, and presentation styles
   App.tsx              Page composition
   main.tsx             React entry point
   index.css            Visual system, responsive styles, and print styles
@@ -56,6 +58,7 @@ Edit shared copy and illustrative datasets in `src/data/`, and section-specific 
 ## Interactive features
 
 - Sticky navigation, active section feedback, a mobile menu, visible keyboard focus, and reduced-motion support.
+- An optional **Present** control opens a chapter guide for the accelerator walkthrough. Previous/Next and a chapter selector move through the existing page, including dedicated research and responsible-design stops. Exit returns focus to the header; ordinary scrolling and the interactive prototype remain available.
 - Three example scenarios: speaking in a small group, entering an unfamiliar social environment, and preparing for a difficult conversation. The hero uses a native scenario selector, an anxiety slider, explainable local recommendations, and pause/resume controls.
 - A complete local journey loop: choose an example or fictional goal, set difficulty and pace, generate a sample, adapt its difficulty, choose a voluntary practice, and complete a reflection.
 - Reflection sliders and an experience selector shape an optional next suggestion. A temporary session summary shows the visitor's numeric demo check-ins; the optional written note is discarded on completion. Pause preserves the current stage, stop ends the practice, and clear resets the session.
@@ -138,5 +141,9 @@ The production build passed TypeScript checking. Chromium checks passed for the 
 ## Motion and transitions
 
 The motion layer uses native CSS and the Web Animations API; no animation dependency is required. Shared timing and interaction styles live in `src/styles/motion.css` and `src/styles/navigation-motion.css`. `src/hooks/useMotion.ts` provides one-time, staggered page reveals, cancellable native disclosure transitions, and discrete content transitions that preserve controls and draft state. Navigation has a measured sliding indicator and an accessible animated mobile menu; dashboard charts interpolate their geometry; demo and pitch state feedback remains restrained.
+
+The opening headline and decorative path have a one-time entrance sequence in `src/styles/hero-motion.css`. `src/hooks/useSectionNavigation.ts` coordinates section links: nearby destinations use a bounded eased scroll, while distant destinations use a short fade over the live page. The fixed header and presentation controls stay available. Wheel, touch, pointer, and navigation-key input interrupt a transition; a newer navigation takes precedence. Page content and demo state are never copied or remounted for the effect.
+
+For a live review, select **Present** in the header, then use the chapter selector or Previous/Next. The guide covers the overview, problem, product approach, live prototype, research vision, responsible design, evidence roadmap, business model, accelerator goals, and founder pitch. It does not advance automatically or require fullscreen. Use the **Exit guided presentation** control to close the guide.
 
 System reduced-motion preferences apply on load and when changed while the site is open. Keyboard focus and deep links expose content immediately; critical validation and crisis messages remain immediate. Unsupported animation APIs fall back to usable native content. Print preparation clears transient motion styles so unrevealed sections are included.

@@ -1,6 +1,8 @@
-import { lazy, Suspense, useRef } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import { usePageMotion } from './hooks/useMotion';
+import { useSectionNavigation } from './hooks/useSectionNavigation';
 import { Header } from './components/Header';
+import { PresentationControls } from './components/PresentationControls';
 import { Hero, HowItWorks, ProblemSection, SolutionSection } from './components/Introduction';
 import { JourneyDemo, SampleJourney } from './components/JourneyExperience';
 import { AISystem, EvidenceRoadmap, SafetySection } from './components/SafetyEvidence';
@@ -12,10 +14,12 @@ const PitchTimer = lazy(() => import('./components/PitchTimer').then(module => (
 
 export default function App() {
   const pageRef = useRef<HTMLDivElement>(null);
+  const [presenting, setPresenting] = useState(false);
   usePageMotion(pageRef);
+  useSectionNavigation(pageRef);
   return (
     <div id="top" ref={pageRef}>
-      <Header />
+      <Header onPresent={() => setPresenting(true)} presentationActive={presenting} />
       <main id="main" tabIndex={-1}>
         <Hero />
         <ProblemSection />
@@ -47,6 +51,7 @@ export default function App() {
         <ContactSection />
       </main>
       <Footer />
+      <PresentationControls active={presenting} onExit={() => setPresenting(false)} />
     </div>
   );
 }

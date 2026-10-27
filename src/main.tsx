@@ -4,6 +4,8 @@ import App from './App';
 import './index.css';
 import './styles/motion.css';
 import './styles/navigation-motion.css';
+import './styles/hero-motion.css';
+import './styles/presentation.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode><App /></StrictMode>,

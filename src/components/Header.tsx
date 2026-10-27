@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, Presentation, X } from 'lucide-react';
 import { navigation } from '../data/content';
 
 export function Logo() {
@@ -15,7 +15,7 @@ export function Logo() {
   );
 }
 
-export function Header() {
+export function Header({ onPresent, presentationActive = false }: { onPresent?: () => void; presentationActive?: boolean } = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState('product');
   const [scrolled, setScrolled] = useState(false);
@@ -136,11 +136,16 @@ export function Header() {
                 {item.label}
               </a>
             ))}
-            <a className="mobile-contact" href="#contact" style={{ '--navigation-order': navigation.length } as CSSProperties}
+            <a className="mobile-demo" href="#journey" style={{ '--navigation-order': navigation.length } as CSSProperties} onClick={() => setMenuOpen(false)}>View demo</a>
+            <a className="mobile-contact" href="#contact" style={{ '--navigation-order': navigation.length + 1 } as CSSProperties}
               onClick={() => setMenuOpen(false)}>Contact</a>
           </nav>
           <div className="header-actions">
-            <a className="header-contact" href="#contact">Contact</a>
+            {onPresent && <button id="present-toggle" type="button" className="present-toggle" aria-pressed={presentationActive}
+              aria-label={presentationActive ? 'Focus presentation controls' : 'Start guided presentation'}
+              onClick={() => { setMenuOpen(false); if (presentationActive) (document.querySelector<HTMLElement>('#presentation-next:not([aria-disabled="true"])') ?? document.querySelector<HTMLElement>('#presentation-previous:not([aria-disabled="true"])') ?? document.getElementById('presentation-chapter'))?.focus({ preventScroll: true }); else onPresent(); }}>
+              <Presentation size={18} aria-hidden="true" /><span className="present-toggle__label">{presentationActive ? 'Presenting' : 'Present'}</span>
+            </button>}
             <a href="#journey" className="button header-cta" onClick={() => setMenuOpen(false)}>View demo <ArrowUpRight size={17} aria-hidden="true" /></a>
             <button id="menu-toggle" type="button" className={`menu-toggle ${menuOpen ? 'is-open' : ''}`} aria-expanded={menuOpen}
               aria-controls="primary-navigation" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}

@@ -149,7 +149,9 @@ export function usePageMotion<T extends HTMLElement>(ref: RefObject<T | null>) {
       if (scanFrame) window.cancelAnimationFrame(scanFrame);
       scanFrame = 0;
       const hero = root.querySelector('.hero-copy');
-      hero?.querySelectorAll<HTMLElement>(':scope > *').forEach((element, index) => register(element, index * 55));
+      hero?.querySelectorAll<HTMLElement>(':scope > *').forEach((element, index) => {
+        if (!element.matches('.hero-heading')) register(element, index * 55);
+      });
       root.querySelectorAll<HTMLElement>('.hero-product, .trust-item').forEach((element, index) => register(element, 110 + index * 35));
       root.querySelectorAll<HTMLElement>(REVEAL_GROUPS).forEach(element => {
         if (element.matches('.problem-layout')) {
@@ -171,11 +173,12 @@ export function usePageMotion<T extends HTMLElement>(ref: RefObject<T | null>) {
     scan();
 
     const revealContaining = (target: Element) => {
+      const content = target === root || target.matches('main') ? root.querySelector('.hero') ?? target : target;
       pending.forEach(element => {
-        if (element === target || element.contains(target) || target.contains(element)) reveal(element, true);
+        if (element === content || element.contains(content) || content.contains(element)) reveal(element, true);
       });
       running.forEach((animation, element) => {
-        if (element === target || element.contains(target) || target.contains(element)) {
+        if (element === content || element.contains(content) || content.contains(element)) {
           animation.cancel();
           running.delete(element);
         }
@@ -189,9 +192,7 @@ export function usePageMotion<T extends HTMLElement>(ref: RefObject<T | null>) {
       }
       revealContaining(event.target);
     };
-    const revealHashTarget = () => {
-      const target = getHashTarget(root);
-      if (!target) return;
+    const exposeTarget = (target: Element) => {
       for (let parent = target.parentElement; parent; parent = parent.parentElement) {
         if (parent instanceof HTMLDetailsElement) {
           const job = disclosures.get(parent);
@@ -205,6 +206,14 @@ export function usePageMotion<T extends HTMLElement>(ref: RefObject<T | null>) {
       }
       scan();
       revealContaining(target);
+    };
+    const revealHashTarget = () => {
+      const target = getHashTarget(root);
+      if (target) exposeTarget(target);
+    };
+    const prepareSectionNavigation = (event: Event) => {
+      const target = (event as CustomEvent<{ target?: Element }>).detail?.target;
+      if (target instanceof Element && root.contains(target)) exposeTarget(target);
     };
 
     function finishDisclosure(details: HTMLDetailsElement, job: DisclosureAnimation) {
@@ -273,6 +282,7 @@ export function usePageMotion<T extends HTMLElement>(ref: RefObject<T | null>) {
     };
     root.addEventListener('click', animateDisclosure);
     root.addEventListener('focusin', focusVisibleContent);
+    root.addEventListener('fearlessu:section-navigation', prepareSectionNavigation);
     window.addEventListener('hashchange', revealHashTarget);
     window.addEventListener('beforeprint', settle);
     window.addEventListener('resize', settleResizedDisclosures);
@@ -283,6 +293,7 @@ export function usePageMotion<T extends HTMLElement>(ref: RefObject<T | null>) {
       mutations.disconnect();
       root.removeEventListener('click', animateDisclosure);
       root.removeEventListener('focusin', focusVisibleContent);
+      root.removeEventListener('fearlessu:section-navigation', prepareSectionNavigation);
       window.removeEventListener('hashchange', revealHashTarget);
       window.removeEventListener('beforeprint', settle);
       window.removeEventListener('resize', settleResizedDisclosures);

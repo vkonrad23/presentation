@@ -98,7 +98,7 @@ export const founder = {
   role: 'Founder and Product Lead',
   bio: 'Vladyslav Konrad is a Software Engineering student at American University Kyiv, an ASU partner institution, and the founder of FearlessU.',
   expertise: 'His educational background is in software engineering. Clinical design, therapeutic research, safety review, and evaluation require qualified collaborators; no clinical qualification is claimed.',
-  motivation: 'To make personalized CBT-informed support more accessible and investigate original research candidates responsibly, with a long-term interest in trauma-informed resources for military personnel and civilians affected by the war in Ukraine.',
+  motivation: 'Mental health deserves to be a global priority. I’m building FearlessU to make compassionate, CBT-informed support more accessible, with a particular commitment to Ukrainians and people around the world whose lives have been affected by war, displacement, and loss.',
   institutionalContext: 'American University Kyiv’s academic relationship with Arizona State University is educational context. It does not establish a FearlessU partnership with ASU or Mayo Clinic.',
 };
 export const teamPriorities = [

@@ -183,10 +183,13 @@ export function TeamSection() {
           <article className="self-start rounded-3xl border border-[#DCE5DB] bg-[#EDF4EC] p-6 sm:p-8">
             <div className="mb-7 flex items-center gap-5"><span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#063F32] text-xl font-semibold text-[#E8B93F]" aria-label="Founder initials">VK</span><div><h3 className="text-xl font-semibold text-[#10251F]">{founder.name}</h3><p className="mt-1 text-base text-[#52645D]">{founder.role}</p></div></div>
             <p className="text-base leading-relaxed text-[#52645D]">{founder.bio}</p>
+            <h4 className="mt-6 text-base font-semibold text-[#063F32]">Why I’m building FearlessU</h4>
+            <blockquote className="mt-3 text-base leading-relaxed text-[#52645D]">{founder.motivation}</blockquote>
+            <p className="mt-3 text-sm leading-relaxed text-[#52645D]">Trauma-informed resources are part of the long-term vision and would require qualified expertise and appropriate evaluation.</p>
             <p className="mt-4 text-xs leading-relaxed text-[#52645D]">{founder.institutionalContext}</p>
             <details className="group mt-6 border-t border-[#CFDDCF]">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3 text-base font-semibold text-[#063F32] [&::-webkit-details-marker]:hidden">Education & founding motivation<ChevronDown size={18} className="shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" /></summary>
-              <dl className="space-y-5 pb-2 text-base leading-relaxed"><div><dt className="font-semibold text-[#10251F]">Educational background</dt><dd className="mt-1 text-[#52645D]">{founder.expertise}</dd></div><div><dt className="font-semibold text-[#10251F]">Founder motivation</dt><dd className="mt-1 text-[#52645D]">{founder.motivation}</dd></div></dl>
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3 text-base font-semibold text-[#063F32] [&::-webkit-details-marker]:hidden">Education & expertise<ChevronDown size={18} className="shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" /></summary>
+              <dl className="space-y-5 pb-2 text-base leading-relaxed"><div><dt className="font-semibold text-[#10251F]">Educational background</dt><dd className="mt-1 text-[#52645D]">{founder.expertise}</dd></div></dl>
             </details>
           </article>
           <div>

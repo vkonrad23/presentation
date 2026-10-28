@@ -11,7 +11,7 @@ export function Hero() {
       <div className="container hero-grid">
         <div className="hero-copy">
           <p className="hero-badge">Interactive prototype · CBT-informed</p>
-          <h1 id="hero-title" className="hero-heading"><span className="hero-title-line">Face fear,</span>{' '}<span className="hero-title-line">one <em>manageable</em></span>{' '}<span className="hero-title-line">step at a time.</span></h1>
+          <h1 id="hero-title" className="hero-heading"><span className="hero-title-line">Beyond fear.</span>{' '}<span className="hero-title-line"><em>Beyond limits.</em></span></h1>
           <p className="hero-description">FearlessU explores CBT-informed support through small, optional practice steps and reflection. Try the approach at a pace you choose.</p>
           <div className="hero-actions">
             <a className="button" href="#journey">Explore the fear journey <ArrowUpRight size={19} aria-hidden="true" /></a>

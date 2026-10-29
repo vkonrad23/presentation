@@ -17,6 +17,8 @@ npm run dev
 
 Use the address printed by Vite. Stop the development server with `Ctrl+C`.
 
+In VS Code on Windows, open the project folder containing `package.json`, choose **Terminal → New Terminal**, and run the same commands in PowerShell. Open Vite's printed Local address in a regular browser and keep the terminal running while using the site.
+
 Create and inspect the production build:
 
 ```sh
@@ -66,10 +68,13 @@ Edit shared copy and illustrative datasets in `src/data/`, and section-specific 
 - Keyboard-accessible public-speaking sample tabs with preparation, activity, reflection, illustrative ratings, and reversible demo completion.
 - An impact dashboard with local 7-, 30-, and 90-day filters. Its illustrative metrics are separate from the visitor's temporary session check-ins and are not clinical evidence or actual traction.
 - A 60-second pitch timer with pause, reset, and teleprompter controls.
+- An optional camera check in the pitch section. **Check my camera** requests video-only browser permission and shows a mirrored live preview once a playable frame is available. **Stop camera** releases the stream; **Cancel camera check** also disposes of a late permission result. The preview stops when the tab is hidden, the visitor leaves the page, or the component is removed. The timer and teleprompter work independently of camera access.
 - A downloadable one-page summary and print styling for saving a copy as PDF through the browser.
 - FAQ accordions, draft privacy and prototype-terms dialogs, and a contact form with local validation, clear controls, and demo-only feedback. The form does not contact the founder.
 
 No backend, live AI model, API key, database, authentication service, or persistent application storage is required. Form and journey entries remain temporary local draft state; they are not submitted to a server or saved in `localStorage`. Reloading the page resets this state. Use invented examples only and do not enter sensitive mental-health or identifying information. A locally generated download is a file the user chooses to retain.
+
+The camera check is a local preview: it requests no microphone access and does not record, upload, or save video. It confirms a playable feed so the visitor can assess framing and light. Record the final pitch separately using a recording application. Camera access requires a supported browser on localhost or HTTPS and the visitor's permission; a downloaded HTML preview may have browser-specific camera restrictions.
 
 ## Replace and verify before submission
 
@@ -130,6 +135,7 @@ Review the following after changing a component or design token:
 - All three scenarios, empty/invalid goals, local difficulty adaptation, the practice/reflection loop, feedback rationale, pause/resume, stop, and clear. Submit a recognized crisis phrase in both the goal and the optional reflection to verify that the sample stops.
 - Keyboard navigation, visible focus, sample-tab Arrow/Home/End keys, native scenario selection, accordions, privacy/terms dialog close and Escape behavior, and reduced-motion preferences.
 - All dashboard ranges, timer start/pause/resume/reset and completion, teleprompter controls, contact validation/success/clear, summary download, and Print / Save as PDF.
+- Camera access only after an explicit click; preview readiness, denied permission, missing/busy devices, unsupported or insecure contexts, cancellation and retry, and track release on stop, disconnect, hidden tab, and unmount. Use simulated browser media devices for automated checks; those checks do not establish that a particular visitor's physical camera works.
 - Browser console errors, unintended network submissions, and unexpected local/session storage. Application inputs should remain in page memory only; ordinary development asset and hot-reload requests are separate from form submission.
 
 Interface checks do not establish clinical suitability, safety, effectiveness, or full accessibility conformance. Any reported validation results should state which commands, interactions, and viewport widths were actually checked for that version.

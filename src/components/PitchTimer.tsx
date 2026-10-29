@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, Clock3, Expand, Pause, Play, RotateCcw, Video, X } from 'lucide-react';
+import { ChevronDown, Clock3, Expand, Pause, Play, RotateCcw, X } from 'lucide-react';
 import { pitchScript } from '../data/dashboardContent';
 import { useContentTransition, useReducedMotion } from '../hooks/useMotion';
+import { CameraCheck } from './CameraCheck';
 
 function formatTime(seconds: number) {
   return Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
@@ -120,17 +121,7 @@ export function PitchTimer() {
               A working rehearsal space for a clear, responsible founder story.
               Practice the pace, then make room for the questions that matter.
             </p>
-            <div className="mt-7 flex items-start gap-4 rounded-2xl border border-[#DCE5DB] bg-[#F7F8F2] p-5">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#063F32] text-[#E8B93F]">
-                <Video size={21} aria-hidden="true" />
-              </span>
-              <div>
-                <h3 className="text-base font-semibold text-[#10251F]">Founder video · to be recorded</h3>
-                <p className="mt-1 text-sm leading-relaxed text-[#52645D]">
-                  Video placeholder. Add the final founder recording before submission.
-                </p>
-              </div>
-            </div>
+            <CameraCheck />
           </div>
 
           <div className="min-w-0 rounded-3xl border border-[#DCE5DB] bg-white p-5 shadow-[0_12px_40px_rgba(6,63,50,0.035)] sm:p-7">
